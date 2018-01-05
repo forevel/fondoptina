@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <title>Установка и настройка яндекс карты</title>
+  <meta charset="UTF-8">
+  <meta name="description" content="Урок по установке и настройке яндекс карты">
+  <meta name="author" content="Сергей Михалевич">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Иконка сайта -->
+  <link rel="shortcut icon" type="images/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/favicon/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="images/favicon/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="images/favicon/apple-touch-icon-114x114.png">
+  <!-- Стили -->
+<script src="/jquery-3.2.1.min.js"></script>
+<script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+</head>
+
+<body>
+  <!--Copyright www.Master-CSS.com-->
+  <!-- Начало кода -->
+<div id="map" style="width: 600px; height: 400px"></div>
+  
+</div>
+<p>Hello!</p>
+
+<!-- Конец кода -->
+<!-- Подключаем скрипты -->
+
+  <!-- Конец кода -->
+  <!-- Подключаем скрипты -->
+</body>
+<script type="text/javascript">
+    ymaps.ready(init);
+    var myMap;
+
+    function init(){     
+        myMap = new ymaps.Map("map", {
+            center: [55.76, 37.64],
+            zoom: 7
+        });
+    }
+</script>
+</html>
