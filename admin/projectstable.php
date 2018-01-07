@@ -7,7 +7,10 @@ if(isset($_SESSION["rights"]))
     $projects = get_table_from_db("projects");
 }
 else
-    header("Location: ../inc/login.php");
+{
+    fo_error_msg("Не заданы права пользователя");
+    fo_redirect("../inc/login.php");
+}
 ?>
 
 <!DOCTYPE html>

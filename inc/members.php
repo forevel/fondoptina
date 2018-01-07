@@ -6,5 +6,5 @@ $psw = $_SESSION['password'];
 print("<b>$login</b>! Добро пожаловать<br>\n");
 print("Ваш пароль: <b>$psw</b><br>\n");
 print("<a href=\"logout.php"."\">Выход</a>"); */
-header("Location: ../admin/index.php");
+fo_redirect("../admin/index.php");
 ?>

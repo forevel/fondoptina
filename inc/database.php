@@ -9,32 +9,38 @@ function db_connect()
     $link = mysqli_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB);
     if (!$link) 
     {
-        error_msg("Невозможно установить соединение с MySQL\n".mysqli_connect_error());
+        fo_error_msg("Невозможно установить соединение с MySQL\n".mysqli_connect_error());
         exit;
     }
 }
 
 // http://programmer-weekdays.ru/archives/301
 
-function newRecord($table, $fieldsvalues)
+function newRecord($table, $keysvalues)
 {
     global $link;
-    $query = "SELECT `id` FROM $table ORDERBY `id` DESC LIMIT 1;";
-    $id = mysqli_query($link, $query);
-    if (!$id)
+    if (!$link)
+        db_connect();
+    $query = "SELECT `id` FROM `$table` ORDER BY `id` DESC LIMIT 1;";
+    fo_error_msg($query);
+    $result = mysqli_query($link, $query);
+    if (!$result)
     {
-        printf("Acquiring key id failed");
+        fo_error_msg("Acquiring key id failed");
         return RESULT_ERROR;
     }
+    $idres = mysqli_fetch_assoc($result);
+    $id = $idres['id'];
+    var_dump($idres);
     if ($id == "")
         $id = "1"; // если таблица пустая, первым id будет 1
     else
         $id++; // converting to int and set it to next free index
-    $query = "INSERT INTO `$table` (`id`) VALUES (`$id`);"; // inserting
+    $query = "INSERT INTO `$table` (`id`) VALUES (\"$id\");"; // inserting
     $result = mysqli_query($link, $query);
     if (!$result)
     {
-        error_msg("Inserting id $id into table $table failed");
+        fo_error_msg("Inserting id $id into table $table failed");
         return RESULT_ERROR;
     }
     return update_table_with_values($table, $keysvalues, $id);
@@ -42,19 +48,23 @@ function newRecord($table, $fieldsvalues)
 
 function update_table_with_values($table, $keysvalues, $id)
 {
+    global $link;
+    if (!$link)
+        db_connect();
     $query = "UPDATE `$table` SET ";
-    foreach($fieldsvalues as $key => $value)
+    foreach($keysvalues as $key => $value)
     {
         $key = mysqli_real_escape_string($link, $key);
         $value = mysqli_real_escape_string($link, $value);
-        $query .= "`$key` = `$value`,";
+        $query .= "`$key` = \"$value\",";
     }
     $query = substr($query, 0, -1); // deleting the last character from the query
     $query .= " WHERE `id`=$id;";
+    fo_error_msg($query);
     $result=mysqli_query($link, $query);
     if (!$result)
     {
-        error_msg(sprintf("Inserting into $table failed. Error: %s", mysqli_error($link)));
+        fo_error_msg(sprintf("Inserting into $table failed. Error: %s", mysqli_error($link)));
         return RESULT_ERROR;
     }
     return RESULT_GOOD;
@@ -66,7 +76,7 @@ function delete_from_db($table, $id)
     $result=mysqli_query($link, $query);
     if (!$result)
     {
-        error_msg(sprintf("Deleting from $table failed. Error: %s", mysqli_error($link)));
+        fo_error_msg(sprintf("Deleting from $table failed. Error: %s", mysqli_error($link)));
         return RESULT_ERROR;
     }
     return RESULT_GOOD;
@@ -74,26 +84,7 @@ function delete_from_db($table, $id)
 
 function get_table_from_db($table)
 {
-    global $link;
-    
     return get_table_from_db_with_conditions($table);
-/*    $query = "SELECT * FROM `$table`";
-    $result = mysqli_query($link, $query);
-    
-    if (!$result)
-    {
-        echo "<br><script type=\"text/javascript\">alert(\"Selecting projects failed\");</script>";
-        return false;
-    }    
-    $n = mysqli_num_rows($result);
-    $retvalue = array();
-    
-    for ($i=0; $i<$n; $i++)
-    {
-        $row = mysqli_fetch_assoc($result);
-        $retvalue[] = $row;
-    }
-    return $retvalue; */
 }
 
 /* selects $fields from $table by $keysvalues
@@ -105,6 +96,8 @@ function get_table_from_db($table)
 function get_table_from_db_with_conditions($table, $fields=array(), $keysvalues=array())
 {
     global $link;
+    if (!$link)
+        db_connect();
     $query="SELECT ";
     if (!empty($fields))
     {
@@ -130,11 +123,11 @@ function get_table_from_db_with_conditions($table, $fields=array(), $keysvalues=
         $query = substr($query, 0, -4); // deletes last "AND "
     }
     $query .= ";";
-//    echo $query;
+//    fo_error_msg ($query);
     $result=mysqli_query($link, $query);
     if (!$result)
     {
-        error_msg("Checking login info failed. Error: ".mysqli_error($link)." => ".$query);
+        fo_error_msg("Checking login info failed. Error: ".mysqli_error($link)." => ".$query);
         return RESULT_ERROR;
     }
 
@@ -155,6 +148,8 @@ function get_table_from_db_with_conditions($table, $fields=array(), $keysvalues=
 function db_disconnect()
 {
     global $link;
+    if (!$link)
+        return;
     mysqli_close($link);
 }
 

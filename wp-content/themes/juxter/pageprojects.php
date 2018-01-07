@@ -106,27 +106,41 @@ do_action( 'hoot_template_before_content_grid', 'page.php' );
                 center: [54.03482, 35.78226],
                 zoom: 13
             }); 
-                <?php
-                $template_url = get_template_directory_uri();
-                db_connect();
-                $projects = get_projects_from_db();
-                foreach($projects as $p)
-                { 
-                ?>
-                myPlacemark = new ymaps.Placemark([<?php echo $p['lat']; ?>,
-                                                   <?php echo $p['log']; ?>],
-                                                  {
-                    hintContent: '<?php echo $p['name']; ?>'},{
-                    iconLayout: 'default#image',
-                    iconImageHref: '<?php echo $template_url ?>/pic/<?php echo $p['pic']; ?>',
-                    iconImageSize: [30, 40],
-                    iconImageOffset: [0, 0]
-                });
-                myMap.geoObjects.add(myPlacemark);
-                <?php
-                }
-                db_disconnect();
-                 ?>
+
+            var MyBalloonContentLayoutClass = ymaps.templateLayoutFactory.createClass(
+    '<h3>{{ properties.name }}</h3>' +
+    '<p>Описание: {{ properties.description }}</p>' +
+    '<p><a href= {{ properties.url|default:"#" }} >Продолжение</a></p>'
+            );
+            <?php
+            $template_url = get_template_directory_uri();
+            $projects = get_table_from_db("projects");
+            foreach($projects as $p)
+            {
+                $symbols = array(
+                    "heartg.png",
+                    "heartp.png",
+                    "christ.png",
+                    "building.png",
+                )
+            ?>
+            myPlacemark = new ymaps.Placemark([<?php echo $p['lat']; ?>,
+                                               <?php echo $p['log']; ?>],
+                                              {
+                hintContent: '<?php echo $p['name']; ?>',
+                name: '<?php echo $p["name"]; ?>',
+                description: '<?php echo $p["descr"]; ?>',
+                url: '<?php echo $p["url"]; ?>'},{
+                iconLayout: 'default#image',
+                iconImageHref: '<?php echo $template_url ?>/pic/<?php echo $symbols[$p['cat']]; ?>',
+                iconImageSize: [30, 40],
+                iconImageOffset: [-20, -40],
+                balloonContentLayout: MyBalloonContentLayoutClass
+            });
+            myMap.geoObjects.add(myPlacemark); 
+            <?php
+            }
+            ?>
 
                                   }
         });

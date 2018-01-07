@@ -3,7 +3,8 @@ require_once("../inc/config.php");
 // считать права доступа к сайту через SESSION
 if(!isset($_SESSION["rights"]))
 {
-    header("Location: ../inc/login.php");
+    fo_error_msg("Не установлены права доступа для данного пользователя");
+    fo_redirect("../inc/logout.php");
     exit;
 }
 // если администратор (права 4), дать ссылку редактирования пользователей

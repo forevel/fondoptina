@@ -2,14 +2,15 @@
 require_once("../inc/config.php");
 if(!isset($_SESSION["rights"]))
 {
-    header("Location: ../inc/login.php");
+    fo_error_msg("Не установлены права доступа для данного пользователя");
+    fo_redirect("../inc/logout.php");
     exit;
 }
 
 $rights = $_SESSION["rights"];
 if ($rights != 4)
 {
-    echo "Недостаточно прав";
+    fo_error_msg("Недостаточно прав");
     exit;
 }
 

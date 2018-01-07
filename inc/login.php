@@ -9,35 +9,20 @@ if(isset($_POST["submit"]))
 {
     field_validator("login name", $_POST["login"], "alphanumeric", 4, 15);
     field_validator("password", $_POST["password"], "string", 4, 15);
-    if($messages)
-    {
-        doIndex();
-        exit;
-    }
 
-    if( !($row = checkPass($_POST["login"], $_POST["password"])) )
+    $row = checkPass($_POST["login"], $_POST["password"]);
+	if ($row != RESULT_ERROR)
     {
-        $messages[]="Incorrect login/password, try again";
+		cleanMemberSession($row[0]['user'], $row[0]['psw'], $row[0]['rights']);
+		fo_redirect("members.php");
     }
-
-    if($messages)
-    {
-        doIndex();
-        exit;
-    }
-
-    cleanMemberSession($row['user'], $row['psw'], $row['rights']);
-    header("Location: members.php");
 }
-else
-{
-    doIndex();
-}
+/*doIndex();
 
 function doIndex()
 {
     global $messages;
-    global $title;
+    global $title; */
 ?>
 <html>
 <head>
@@ -47,10 +32,10 @@ function doIndex()
 <body>
 <h1><?php print $title; ?></h1>
 <?php
-if($messages)
+/*if($messages)
 {
     displayErrors($messages);
-}
+} */
 ?>
 <form action="<?php print $_SERVER["PHP_SELF"]; ?>" method="POST">
 <table>
@@ -64,5 +49,5 @@ maxlength="15"></td></tr>
 </body>
 </html>
 <?php
-}
+//}
 ?>

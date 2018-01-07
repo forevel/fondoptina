@@ -1,7 +1,6 @@
 <?php
 
 // require_once "config.php";
-session_start();
 $link = null;
 
 function db_connect()
@@ -10,190 +9,124 @@ function db_connect()
     $link = mysqli_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB);
     if (!$link) 
     {
-        echo "Ошибка: Невозможно установить соединение с MySQL." . PHP_EOL;
-        echo "Код ошибки errno: " . mysqli_connect_errno() . PHP_EOL;
-        echo "Текст ошибки error: " . mysqli_connect_error() . PHP_EOL;
+        fo_error_msg("Невозможно установить соединение с MySQL\n".mysqli_connect_error());
         exit;
     }
 }
 
 // http://programmer-weekdays.ru/archives/301
 
-function newUser($login, $password)
+function newRecord($table, $fieldsvalues)
 {
     global $link;
-    $login = mysqli_real_escape_string($link, $login);
-    $password = mysqli_real_escape_string($link, $password);
-//    echo $password;
-    $password = password_hash($password, PASSWORD_DEFAULT);
-    $query="INSERT INTO `users` (`user`, `psw`, `rights`) VALUES('$login', '$password', '1')";
-//    echo $query;
-    $result=mysqli_query($link, $query);
+    $query = "SELECT `id` FROM $table ORDERBY `id` DESC LIMIT 1;";
+    $id = mysqli_query($link, $query);
+    if (!$id)
+    {
+        printf("Acquiring key id failed");
+        return RESULT_ERROR;
+    }
+    if ($id == "")
+        $id = "1"; // если таблица пустая, первым id будет 1
+    else
+        $id++; // converting to int and set it to next free index
+    $query = "INSERT INTO `$table` (`id`) VALUES (`$id`);"; // inserting
+    $result = mysqli_query($link, $query);
     if (!$result)
     {
-        printf("Inserting login info into db failed. Error: %s", mysqli_error($link));
-        return false;
+        fo_error_msg("Inserting id $id into table $table failed");
+        return RESULT_ERROR;
     }
-    return true;
+    return update_table_with_values($table, $keysvalues, $id);
 }
 
-function displayErrors($messages)
-{
-    print("<b>Возникли следующие ошибки:</b>\n<ul>\n");
-
-    foreach($messages as $msg)
-    {
-        print("<li>$msg</li>\n");
-    }
-    print("</ul>\n");
-} 
-
-function checkLoggedIn($status)
-{
-    switch($status)
-    {
-        case "yes":
-            if(!isset($_SESSION["loggedIn"]))
-            {
-                header("Location: login.php");
-                exit;
-            }
-            break;
-        case "no":
-            if(isset($_SESSION["loggedIn"]) && $_SESSION["loggedIn"] === true)
-            {
-                header("Location: members.php");
-            }
-            break;
-    }
-    return true;
-} 
-
-function checkPass($login, $password)
+function update_table_with_values($table, $keysvalues, $id)
 {
     global $link;
-
-    $login = mysqli_real_escape_string($link, $login);
-    $password = mysqli_real_escape_string($link, $password);
-//    echo $password;
-//    $password = password_hash($password, PASSWORD_DEFAULT);
-    $query="SELECT `psw`,`rights` FROM `users` WHERE `user`='$login'";
-//    echo $query;
+    $query = "UPDATE `$table` SET ";
+    foreach($keysvalues as $key => $value)
+    {
+        $key = mysqli_real_escape_string($link, $key);
+        $value = mysqli_real_escape_string($link, $value);
+        $query .= "`$key` = \"$value\",";
+    }
+    $query = substr($query, 0, -1); // deleting the last character from the query
+    $query .= " WHERE `id`=$id;";
+    fo_error_msg($query);
     $result=mysqli_query($link, $query);
     if (!$result)
     {
-        printf("Checking login info failed. Error: %s", mysqli_error($link));
-        return false;
+        fo_error_msg(sprintf("Inserting into $table failed. Error: %s", mysqli_error($link)));
+        return RESULT_ERROR;
     }
-    if(mysqli_num_rows($result)<1)
-    {
-        $messages[] = "Empty select psw result";
-        return false;
-    }
-    $row = mysqli_fetch_assoc($result);
-    $rowfetched=$row['psw'];
-//    echo "row=$rowfetched";
-//    echo "password=$password";
-    if (password_verify($password, $rowfetched)) // совпадают
-    {
-        $row['user'] = $login;
-        return $row;
-    }
-    return false;
-} 
+    return RESULT_GOOD;
+}
 
-function cleanMemberSession($login, $password, $rights)
+function delete_from_db($table, $id)
 {
-    $_SESSION["login"]=$login;
-    $_SESSION["password"]=$password;
-    $_SESSION["rights"]=$rights;
-    $_SESSION["loggedIn"]=true;
-} 
-
-function flushMemberSession()
-{
-    unset($_SESSION["login"]);
-    unset($_SESSION["password"]);
-    unset($_SESSION["rights"]);
-    unset($_SESSION["loggedIn"]);
-    session_destroy();
-    return true;
-} 
-
-function field_validator($field_descr, $field_data, $field_type, $min_length="", $max_length="", $field_required=1)
-{
-    global $messages;
-    if(!$field_data && !$field_required){ return; }
-
-    $field_ok=false;
-
-    $email_regexp="/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|";
-    $email_regexp.="(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/";
-
-    $data_types=array(
-        "email"=>$email_regexp,
-        "digit"=>"/^[0-9]$/",
-        "number"=>"/^[0-9]+$/",
-        "alpha"=>"/^[a-zA-Z]+$/",
-        "alpha_space"=>"/^[a-zA-Z ]+$/",
-        "alphanumeric"=>"/^[a-zA-Z0-9]+$/",
-        "alphanumeric_space"=>"/^[a-zA-Z0-9 ]+$/",
-        "string"=>"^$"
-    );
-
-    if ($field_required && empty($field_data))
+    $query = "DELETE FROM `$table` WHERE `id`=$id;";
+    $result=mysqli_query($link, $query);
+    if (!$result)
     {
-        $messages[] = "Поле $field_descr является обязательным";
-        return;
+        fo_error_msg(sprintf("Deleting from $table failed. Error: %s", mysqli_error($link)));
+        return RESULT_ERROR;
     }
-
-    if ($field_type == "string")
-    {
-        $field_ok = true;
-    }
-    else
-    {
-        $field_ok = preg_match($data_types[$field_type], $field_data);
-    }
-
-    if (!$field_ok) 
-    {
-        $messages[] = "Введённый $field_descr не удовлетворяет правилам ввода";
-        return;
-    }
-
-    if ($field_ok && ($min_length > 0))
-    {
-        if (strlen($field_data) < $min_length)
-        {
-            $messages[] = "$field_descr не должен быть короче $min_length символов";
-            return;
-        }
-    }
-
-    if ($field_ok && ($max_length > 0))
-    {
-        if (strlen($field_data) > $max_length)
-        {
-            $messages[] = "$field_descr не должен быть длиннее $max_length символов";
-            return;
-        }
-    }
+    return RESULT_GOOD;
 }
 
 function get_table_from_db($table)
 {
     global $link;
     
-    $query = "SELECT * FROM `$table`";
-    $result = mysqli_query($link, $query);
-    
+    return get_table_from_db_with_conditions($table);
+}
+
+/* selects $fields from $table by $keysvalues
+ * primary function to get data from database
+ * if $fields is empty gets all values from db
+ * if $keysvalues is empty sends unconditional query
+ */
+
+function get_table_from_db_with_conditions($table, $fields=array(), $keysvalues=array())
+{
+    global $link;
+    $query="SELECT ";
+    if (!empty($fields))
+    {
+        foreach($fields as $f)
+        {
+            $f = mysqli_real_escape_string($link, $f);
+            $query .= "`$f`,";
+        }
+        $query = substr($query, 0, -1); // deleting last char from $query
+    }
+    else // no fields
+        $query .= "*"; // selects all if there's no any fields
+    $query .= " FROM `$table`";
+    if (!empty($keysvalues)) // conditions exists
+    {
+        $query .= " WHERE ";
+        foreach($keysvalues as $key => $value)
+        {
+            $key = mysqli_real_escape_string($link, $key);
+            $value = mysqli_real_escape_string($link, $value);
+            $query .= "`$key`=\"$value\" AND ";
+        }
+        $query = substr($query, 0, -4); // deletes last "AND "
+    }
+    $query .= ";";
+//    fo_error_msg ($query);
+    $result=mysqli_query($link, $query);
     if (!$result)
     {
-        printf("Selecting projects failed. Error: %s", mysqli_error($link));
-        return false;
-    }    
+        fo_error_msg("Checking login info failed. Error: ".mysqli_error($link)." => ".$query);
+        return RESULT_ERROR;
+    }
+
     $n = mysqli_num_rows($result);
+    if ($n == 0) // empty result
+        return RESULT_EMPTY;
+
     $retvalue = array();
     
     for ($i=0; $i<$n; $i++)
@@ -203,7 +136,6 @@ function get_table_from_db($table)
     }
     return $retvalue;
 }
-
 
 function db_disconnect()
 {

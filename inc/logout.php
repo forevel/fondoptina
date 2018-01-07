@@ -2,5 +2,5 @@
 include_once("config.php");
 checkLoggedIn("yes");
 flushMemberSession();
-header("Location: login.php");
+fo_redirect("login.php");
 ?>
