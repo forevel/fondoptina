@@ -40,6 +40,8 @@
  */
 // define( 'HYBRIDEXTEND_DEBUG', true );
 
+
+
 /* Get the template directory and make sure it has a trailing slash. */
 $hoot_base_dir = trailingslashit( get_template_directory() );
 

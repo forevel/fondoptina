@@ -100,7 +100,10 @@ if((isset($_SESSION["rights"])) && (isset($_SESSION['proj_action'])))
     }
 }
 else
-    error_msg("Не установлены права либо отсутствует action");
+{
+    fo_error_msg("Не установлены права либо отсутствует action");
+    exit;
+}
 ?>
 <html>
 <head>

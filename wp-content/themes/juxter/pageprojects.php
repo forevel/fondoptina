@@ -1,6 +1,6 @@
 <?php 
 /**
- * Template name: Projects Page
+ * Template name: One project page
  */ 
 // Loads the header.php template.
 require_once('inc/config.php');
@@ -9,154 +9,69 @@ get_header();
 
 <?php
 // Dispay Loop Meta at top
-hoot_display_loop_title_content( 'pre', 'page.php' );
+hoot_display_loop_title_content( 'pre', 'pageprojects.php' );
 if ( hoot_page_header_attop() ) {
 	get_template_part( 'template-parts/loop-meta' ); // Loads the template-parts/loop-meta.php template to display Title Area with Meta Info (of the loop)
-	hoot_display_loop_title_content( 'post', 'page.php' );
+	hoot_display_loop_title_content( 'post', 'pageprojects.php' );
 }
 
 // Template modification Hook
-do_action( 'hoot_template_before_content_grid', 'page.php' );
+do_action( 'hoot_template_before_content_grid', 'pageprojects.php' );
 ?>
 
 <div class="hgrid main-content-grid">
 
 	<?php
 	// Template modification Hook
-	do_action( 'hoot_template_before_main', 'page.php' );
+	do_action( 'hoot_template_before_main', 'pageprojects.php' );
 	?>
 
-	<main <?php hybridextend_attr( 'content' ); ?>>
+    <main <?php hybridextend_attr( 'content' ); ?>>
 
 		<?php
 		// Template modification Hook
-		do_action( 'hoot_template_main_start', 'page.php' );
+		do_action( 'hoot_template_main_start', 'pageprojects.php' ); ?>
 
-		// Checks if any posts were found.
-		if ( have_posts() ) :
-
-			// Dispay Loop Meta in content wrap
-			if ( ! hoot_page_header_attop() ) {
-				hoot_display_loop_title_content( 'post', 'page.php' );
-				get_template_part( 'template-parts/loop-meta' ); // Loads the template-parts/loop-meta.php template to display Title Area with Meta Info (of the loop)
-			}
-			?>
-
-			<div id="content-wrap">
-
-				<?php
-				// Template modification Hook
-				do_action( 'hoot_loop_start', 'page.php' );
-
-				// Display Featured Image if present
-				if ( hoot_get_mod( 'post_featured_image' ) && !hybridextend_is_404() ) {
-					$img_size = apply_filters( 'hoot_post_image_page', '' );
-					hoot_post_thumbnail( 'entry-content-featured-img', $img_size, true );
-				}
-
-				// Begins the loop through found posts, and load the post data.
-				while ( have_posts() ) : the_post();
-
-					// Loads the template-parts/content-{$post_type}.php template.
-					hybridextend_get_content_template();
-
-				// End found posts loop.
-				endwhile;
-
-				// Template modification Hook
-				do_action( 'hoot_loop_end', 'page.php' );
-				?>
-
-			</div><!-- #content-wrap -->
-
-			<?php
-			// Template modification Hook
-			do_action( 'hoot_template_after_content_wrap', 'page.php' );
-
-			// Loads the comments.php template if this page is not being displayed as frontpage or a custom 404 page or if this is attachment page of media attached (uploaded) to a page.
-			if ( !is_front_page() && !hybridextend_is_404() && !is_attachment() ) :
-
-				// Loads the comments.php template
-				comments_template( '', true );
-
-			endif;
-
-		// If no posts were found.
-		else :
-
-			// Loads the template-parts/error.php template.
-			get_template_part( 'template-parts/error' );
-
-		// End check for posts.
-		endif;
-
-		// Template modification Hook
-		do_action( 'hoot_template_main_end', 'page.php' );
-		?>
+        <div id='project-picture-frame'>
+            <img src="/wp-content/uploads/2018/01/shkola_pokrovsk_1-300x225.png" />
+        </div>
         
-        <script type="text/javascript">
-            jQuery(document).ready(function()
-                                  {
-            ymaps.ready(init);
-            var myMap, myPlacemark;
-
-            function init()
-            { 
-                myMap = new ymaps.Map("yamap", {
-                center: [54.03482, 35.78226],
-                zoom: 13
-            }); 
-
-            var MyBalloonContentLayoutClass = ymaps.templateLayoutFactory.createClass(
-    '<h3>{{ properties.name }}</h3>' +
-    '<p>Описание: {{ properties.description }}</p>' +
-    '<p><a href= {{ properties.url|default:"#" }} >Продолжение</a></p>'
-            );
-            <?php
-            $template_url = get_template_directory_uri();
-            $projects = get_table_from_db("projects");
-            foreach($projects as $p)
-            {
-                $symbols = array(
-                    "heartg.png",
-                    "heartp.png",
-                    "christ.png",
-                    "building.png",
-                )
-            ?>
-            myPlacemark = new ymaps.Placemark([<?php echo $p['lat']; ?>,
-                                               <?php echo $p['log']; ?>],
-                                              {
-                hintContent: '<?php echo $p['name']; ?>',
-                name: '<?php echo $p["name"]; ?>',
-                description: '<?php echo $p["descr"]; ?>',
-                url: '<?php echo $p["url"]; ?>'},{
-                iconLayout: 'default#image',
-                iconImageHref: '<?php echo $template_url ?>/pic/<?php echo $symbols[$p['cat']]; ?>',
-                iconImageSize: [30, 40],
-                iconImageOffset: [-20, -40],
-                balloonContentLayout: MyBalloonContentLayoutClass
-            });
-            myMap.geoObjects.add(myPlacemark); 
-            <?php
-            }
-            ?>
-
-                                  }
-        });
-        </script>
-            
-        <div id="yamap" style="height: 600px; width: 100%;"></div>
+        <div id="project-works-frame">
+            123
+            <div id="pgb"></div>
+        </div>
+    
+        <div><p>История Покровской школы начинается с 1898 года, когда в селе Покровск Костешовской волости Козельского уезда при церкви была открыта церковно-приходская школа. Помещалась она в собственном доме священника. С 1916 года в Покровской церковно-приходской школе начал учительствовать Беляев Иван Петрович. В 30-е годы Беляев И.П., желая сохранить Покровскую церковь от разрушения, добился создания в ней 7-летней школы. В 1960 году школа стала 8-летней.</p>
+        <p>В 1979 году в д. Покровск построили новую двухэтажную школу по типовому проекту. Строительство здания новой 8-летней школы шло, когда директором школы был Чеглаков Александр Егорович. К 1990 году назрела необходимость в полном среднем общем образовании, и по просьбе родителей, школа была преобразована в среднюю общеобразовательную школу. С 1 сентября 2008 года, в связи с комплексной прогроаммой модернизации образования, школа вновь стала основной общеобразовательной школой. Открыта группа предшкольной подготовки детей с 5,5 лет.</p>
+        <p>С июля 2011 года название школы изменилось на Муниципальное бюджетное общеобразовательное учреждение, а с января 2012 года название школы стало Муниципальное казённое общеобразовательное учреждение.</p>
+        <p>В настоящее время в школе реализуются основная общебразовательная программа начального общего образования, основная общеобразовательная программа основного общего образования, дополнительные программы следующих направленностей: художественно-эстетической; физкультурно-спортивной; социально-педагогической; военно-патриотической; научно-технической; подготовка детей к школе.</p>  
+        </div>
+		<?php // Template modification Hook
+		do_action( 'hoot_template_main_end', 'pageprojects.php' );
+		?>
 
 	</main><!-- #content -->
 
 	<?php
 	// Template modification Hook
-	do_action( 'hoot_template_after_main', 'page.php' );
+	do_action( 'hoot_template_after_main', 'pageprojects.php' );
 	?>
 
 	<?php hybridextend_get_sidebar( 'primary' ); // Loads the template-parts/sidebar-primary.php template. ?>
 
 </div><!-- .hgrid -->
+
+    <script>
+        $(document).ready(function() {
+            'use strict';
+            var pgb = $('#pgb');
+            pgb.ariaProgressbar({
+//                progressClass: 'progress progress_streamtext',
+                maxVal: 100
+            });
+
+            pgb.ariaProgressbar('update', 37);
+        });
+    </script> 
 
 <?php get_footer(); // Loads the footer.php template. ?>

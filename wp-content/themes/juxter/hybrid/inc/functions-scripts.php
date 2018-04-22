@@ -46,9 +46,15 @@ function hybrid_enqueue_scripts() {
 	if ( is_singular() && get_option( 'thread_comments' ) && comments_open() )
 		wp_enqueue_script( 'comment-reply' );
 	
-	if (is_page_template('pageprojects.php'))
+	if (is_page_template('pageprojectsmaps.php'))
     {
         wp_enqueue_script('ymap', 'https://api-maps.yandex.ru/2.1/?lang=ru_RU',
                          array('jquery'), null, false);
+    }
+    if (is_page_template('pageprojects.php'))
+    {
+        wp_register_script('aria-progressbar', '/js/aria-progressbar.js');
+        wp_enqueue_script('aria-progressbar');
+        wp_enqueue_style('aria-progressbar', '/css/aria-progressbar.css');
     }
 }
