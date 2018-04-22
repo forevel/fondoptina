@@ -1,0 +1,14 @@
+p.newsplaintext
+{
+    font-family: "Open Sans", "Verdana", serif;
+    color: #324440;
+    font-size: 14px;
+    text-indent: 25px;
+}
+
+p.smallgray
+{
+    font-family: "Open Sans", "Verdana", serif;
+    color: #648880;
+    font-size: 10px;
+}

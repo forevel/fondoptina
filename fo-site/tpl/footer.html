@@ -1,0 +1,12 @@
+<footer>
+    <center><?=$footer?>
+        <?php
+        if(isset($_SESSION["rights"]))
+            print '<a href="logout.php">Выход</a></p>';
+        else
+            print '<a href="admin.php">Вход</a></p>';
+        ?>
+    </center>
+</footer>
+</body>
+</html>
