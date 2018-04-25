@@ -3,22 +3,3 @@
     float: left;
     margin: 0.5em 0 0 0;
 }
-
-.button a 
-{
-  font: bold 12px Verdana, Geneva, "DejaVu Sans", sans-serif;
-  display: block;
-  width: 300px;
-  height: 50px;
-  line-height: 48px;
-  text-decoration: none;
-  background: url(button.png) 50% 0 no-repeat;
-  color: #000;
-  text-align: center;
-}
-
-.button a:hover
-{
-  background: url(button.png) 50% -50px no-repeat;
-  color: #fff;
-}

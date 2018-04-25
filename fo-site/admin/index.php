@@ -31,5 +31,5 @@ if ($rights >= 2)
     echo "<td><a href=\"newstable.php\"><img src=\"/img/newsedit.png\"></a></td>";
     echo "</tr></table>";
 }
-include(__DIR__ . "/editmenu.php");
+// include(__DIR__ . "/editmenu.php");
 ?>

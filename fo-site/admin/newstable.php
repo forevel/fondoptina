@@ -17,6 +17,7 @@ else
 {
     fo_error_msg("Не заданы права пользователя");
     require_once(__DIR__ . "/../inc/login.php");
+    exit;
 }
 ?>
 

@@ -27,9 +27,20 @@ if (isset($_GET['id']))
     }
 }
 else
+{
     fo_error_msg("Ошибка при переходе на страницу");
+    exit;
+}
 
 require_once("aside.php");
+
+echo '<section class="section-main">';
+echo '<section class="section-left">';
+
+// взять все дела из works, для которых idprojects равно $_GET["id"]
+// для каждого дела вставить картинку из .img, добавить надпись из .name
+// и нарисовать два прогрессбара: один с деньгами с процентом из .moneygot/.moneyneed
+// и второй - с прогрессом дела из .workprogress
 
 require_once("tpl/page.html");
 

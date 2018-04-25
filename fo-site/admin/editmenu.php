@@ -9,7 +9,8 @@ if(isset($_SESSION["rights"]))
 else
 {
     fo_error_msg("Не заданы права пользователя");
-    fo_redirect(__DIR__ . "/../inc/login.php");
+    require_once(__DIR__ . "/../inc/login.php");
+    exit;
 }
 ?>
 
