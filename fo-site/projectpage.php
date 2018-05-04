@@ -32,6 +32,7 @@ else
     exit;
 }
 
+$projectid = $_GET['id'];
 require_once("aside.php");
 
 echo '<section class="section-main">';

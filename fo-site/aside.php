@@ -15,9 +15,10 @@ $aside = "";
  */
 $curmonth = date('Y-m');
 $curmonth .= "-01"; // add first day in month
-$keysvalues = array(
+/*$keysvalues = array(
     "date" => $curmonth,
-);
+); */
+$keysvalues = array();
 $fields = array(
     "caption",
     "contents",
@@ -29,16 +30,21 @@ $orderby = array(
     "DESC",
 );
 // SELECT * FROM 'news' WHERE 'date'>=$curmonth ORDERBY date DESC;
-$result = getValuesByFieldsOrdered("news", $fields, $keysvalues, $orderby, 1);
-if ($result == RESULT_ERROR)
-    exit;
-foreach($result as $r)
+$result = getValuesByFieldsOrdered("news", $fields, $keysvalues, $orderby);
+// var_dump($result);
+if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
 {
-    $aside .= "<br>";
-    $aside .= "<h2>".$r["caption"]."</h2>";
-    $aside .= "<p class=\"newsplaintext\">".$r["contents"]."</p>";
-//    var_dump($aside);
-    $aside .= "<br>";
-    $aside .= "<p class=\"smallgray\">".$r["user"]." @ ".$r["date"]."</p>";
+    /* уменьшаем принудительно размер новостей до 3 штук */
+    if (count($result) > 3)
+        array_splice($result, 3, count($result));
+    foreach($result as $r)
+    {
+        $aside .= "<br>";
+        $aside .= "<h2>".$r["caption"]."</h2>";
+        $aside .= "<p class=\"newsplaintext\">".$r["contents"]."</p>";
+    //    var_dump($aside);
+        $aside .= "<br>";
+        $aside .= "<p class=\"smallgray\">".$r["user"]." @ ".$r["date"]."</p>";
+    }
 }
 ?>

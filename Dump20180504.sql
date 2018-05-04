@@ -165,7 +165,7 @@ CREATE TABLE `projects` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`),
   KEY `id_2` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,6 +234,30 @@ INSERT INTO `users` VALUES (1,'admin','$2y$10$CL8vKzVU9CML3QCDTTisle4zF6MUU37OnQ
 UNLOCK TABLES;
 
 --
+-- Table structure for table `workpics`
+--
+
+DROP TABLE IF EXISTS `workpics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `workpics` (
+  `id` int(11) NOT NULL,
+  `url` text,
+  `idwork` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `workpics`
+--
+
+LOCK TABLES `workpics` WRITE;
+/*!40000 ALTER TABLE `workpics` DISABLE KEYS */;
+/*!40000 ALTER TABLE `workpics` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `works`
 --
 
@@ -277,4 +301,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-22 22:50:39
+-- Dump completed on 2018-05-04 23:37:16
