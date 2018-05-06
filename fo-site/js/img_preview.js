@@ -1,4 +1,4 @@
- function previewImage(imgID, file)
+function previewImage(imgID, file)
 {
 	if (file)
 	{

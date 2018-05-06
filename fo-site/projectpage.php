@@ -4,7 +4,7 @@
  * id - id in the table 'staticpages'
  */
 require_once("inc/config.php");
-
+$pagename = 'project';
 require_once("header.php");
 $contents = '';
 if (isset($_GET['id']))
@@ -18,12 +18,9 @@ if (isset($_GET['id']))
     ];
     
     $projdata = getValuesByFieldsOrdered('content', $fields, $keysvalues);
-    if ($projdata != RESULT_ERROR)
+    if (($projdata != RESULT_ERROR) && ($projdata != RESULT_EMPTY))
     {
-        if ($projdata != RESULT_EMPTY)
-        {
-            $contents = $projdata[0]['content'];
-        }
+        $contents = $projdata[0]['content'];
     }
 }
 else
@@ -33,16 +30,21 @@ else
 }
 
 $projectid = $_GET['id'];
-require_once("aside.php");
 
 echo '<section class="section-main">';
 echo '<section class="section-left">';
 
 // взять все дела из works, для которых idprojects равно $_GET["id"]
-// для каждого дела вставить картинку из .img, добавить надпись из .name
-// и нарисовать два прогрессбара: один с деньгами с процентом из .moneygot/.moneyneed
-// и второй - с прогрессом дела из .workprogress
+$keysvalues = [
+    'idprojects' => $projectid,
+];
+$result = getValuesByFieldsOrdered('works', array(), $keysvalues);
+if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
+{
+    require_once("works.html");
+}
 
+require_once("aside.php");
 require_once("tpl/page.html");
 
 require_once("footer.php"); 

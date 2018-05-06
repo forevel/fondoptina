@@ -3,7 +3,7 @@
  * A page with a map on it
  */
 require_once("inc/config.php");
-
+$pagename = 'contacts';
 require_once("header.php");
 
 $fields = [
@@ -22,7 +22,8 @@ if ($projdata != RESULT_ERROR)
         $contents = $projdata[0]['contents'];
     }
 }
-
+echo '<section class="section-main">';
+echo '<section class="section-left">';
 require_once("aside.php");
 
 require_once("tpl/page.html");

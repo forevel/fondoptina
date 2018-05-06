@@ -6,7 +6,10 @@ $fields = [
     'contents',
 ];
 
-$indexedresult = getPageByName('main', $fields);
+if (isset($pagename))
+    $indexedresult = getPageByName($pagename, $fields);
+else
+    $indexedresult = getPageByName('main', $fields);
 
 $title = $indexedresult['title'];
 

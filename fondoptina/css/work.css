@@ -1,0 +1,18 @@
+.worktable {
+    
+}
+
+.workurl {
+    
+}
+
+.workprogress {
+    width: 100%;
+    background-color: grey;
+}
+
+.workbar {
+    width: 1%;
+    height: 5px;
+    background-color: orangered;
+}
