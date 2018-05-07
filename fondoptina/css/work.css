@@ -1,5 +1,5 @@
 .worktable {
-    
+    margin: 5px 5px;
 }
 
 .workurl {
@@ -13,6 +13,18 @@
 
 .workbar {
     width: 1%;
-    height: 5px;
+    height: 10px;
     background-color: orangered;
+    -moz-border-radius: 25px;
+	-webkit-border-radius: 25px;
+	border-radius: 25px;
+}
+
+.workinnertable {
+    margin: 15px 15px;
+}
+
+.acentered {
+    display: block;
+    text-align: center;
 }

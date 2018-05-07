@@ -4,25 +4,23 @@
     {
         $count++; ?>
         <!-- для каждого дела вставить картинку из .img, добавить надпись из .name -->
-        <td><table><tr><a href="<?=$r['url'] ?>"><img class="preview-img" src="<?=$r['pic'] ?>"></a></tr>
-        <tr><a class="workurl" href="<?=$r['url']?>"><?=$r['name']?></a></tr>
+        <td><table class="workinnertable"><tr><td><a class="acentered" href="<?=$r['url'] ?>"><img class="preview-img" src="<?=$r['pic'] ?>"></a></td></tr>
+        <tr><td><a class="acentered" class="workurl" href="<?=$r['url']?>"><?=$r['name']?></a></td></tr>
         <!-- и нарисовать два прогрессбара: один с деньгами с процентом из .moneygot/.moneyneed -->
         <?php $wpercent = $r['moneygot'] / $r['moneyneed'] * 100; ?>
-        <tr><div class="workprogress"><div class="workbar" id="wb<?=$count?>"></div></div><?=$wpercent?></tr>
+        <tr><td><div class="workprogress"><div class="workbar" id="wb<?=$count?>"></div></div>Собрано <?=$r['moneygot']?> из <?=$r['moneyneed']?> рублей</td></tr>
         <!-- и второй - с прогрессом дела из .workprogress -->
         <?php $wwpercent = $r['workprogress']; ?>
-        <tr><div class="workprogress"><div class="workbar" id="wba<?=$count?>"></div></div><?=$wwpercent?></tr>
+        <tr><td><div class="workprogress"><div class="workbar" id="wba<?=$count?>"></div></div>Работа выполнена на <?=$wwpercent?> %</td></tr>
             <script type='text/javascript'>
-                $(function (){
-                    setprogressbar("wb<?=$count?>", <?=$wpercent?>);
-                    setprogressbar("wba<?=$count?>", <?=$wwpercent?>);
-                });
+                document.write(setprogressbar("wb<?=$count?>", <?=$wpercent?>))
+                document.write(setprogressbar("wba<?=$count?>", <?=$wwpercent?>))
             </script>
 
         
         
         </table></td>
-        <?php if ($count % 4) // дела - по четыре в ряд
+        <?php if (($count % 4) == 0) // дела - по четыре в ряд
         { ?>
             </tr><tr>
         <?php } 
