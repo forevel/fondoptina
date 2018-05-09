@@ -10,6 +10,7 @@ $contents = '';
 if (isset($_GET['id']))
 {
     $fields = [
+        'header',
         'content',
     ];
     $keysvalues = [
@@ -21,6 +22,7 @@ if (isset($_GET['id']))
     if (($projdata != RESULT_ERROR) && ($projdata != RESULT_EMPTY))
     {
         $contents = $projdata[0]['content'];
+        $header = $projdata[0]['header'];
     }
 }
 else
@@ -33,6 +35,7 @@ $projectid = $_GET['id'];
 
 echo '<section class="section-main">';
 echo '<section class="section-left">';
+echo '<h2>'.$header.'</h2>';
 
 // взять все дела из works, для которых idprojects равно $_GET["id"]
 $keysvalues = [
@@ -45,7 +48,8 @@ if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
 }
 
 require_once("aside.php");
-require_once("tpl/page.html");
+require_once("tpl/main.html");
+require_once("tpl/aside.html");
 
 require_once("footer.php"); 
 

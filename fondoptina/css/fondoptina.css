@@ -1,11 +1,13 @@
 .site-body {
-    width: 80%;
+    width: 90%;
+    min-width: 1400px;
     margin-left: auto;
     margin-right: auto;
     background: rgba(180, 196, 198, 1.0);
+    overflow: auto;
 }
 
-.section-left {
+.section-left { 
     display: inline-block;
     margin: 0 1.5%;
     width: 64%;

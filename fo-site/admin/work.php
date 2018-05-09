@@ -40,19 +40,19 @@ function updateFiles($id)
     }
 }
 
-$title="Редактор проектов";
+$title="Редактор работ";
 $images = array();
 
 if (isset($_GET['action']))
 {
-    $_SESSION['proj_action'] = $_GET['action'];
+    $_SESSION['work_action'] = $_GET['action'];
     if (($_GET['action'] == "edit") && (isset($_GET['id'])))
-        $_SESSION['proj_id'] = $_GET['id'];
+        $_SESSION['work_id'] = $_GET['id'];
 }
 // считать права доступа к сайту через SESSION
-if((isset($_SESSION["rights"])) && (isset($_SESSION['proj_action'])))
+if((isset($_SESSION["rights"])) && (isset($_SESSION['work_action'])))
 {
-    $action = $_SESSION['proj_action'];
+    $action = $_SESSION['work_action'];
     if (isset($_POST["submit"]))
     {
         if (isset($_POST["name"]))

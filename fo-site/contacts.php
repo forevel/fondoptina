@@ -26,7 +26,9 @@ echo '<section class="section-main">';
 echo '<section class="section-left">';
 require_once("aside.php");
 
-require_once("tpl/page.html");
+require_once("tpl/main.html");
+require_once("tpl/aside.html");
+
 
 require_once("footer.php"); 
 
