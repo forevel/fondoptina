@@ -4,25 +4,25 @@
  * id - id in the table 'staticpages'
  */
 require_once("inc/config.php");
-$pagename = 'project';
-require_once("header.php");
 $contents = '';
 if (isset($_GET['id']))
 {
     $fields = [
-        'header',
+        'descr',
         'content',
+        'title',
     ];
     $keysvalues = [
         'id' => $_GET['id'],
         'deleted' => '0',
     ];
     
-    $projdata = getValuesByFieldsOrdered('content', $fields, $keysvalues);
+    $projdata = getValuesByFieldsOrdered('projects', $fields, $keysvalues);
     if (($projdata != RESULT_ERROR) && ($projdata != RESULT_EMPTY))
     {
         $contents = $projdata[0]['content'];
-        $header = $projdata[0]['header'];
+        $projheader = $projdata[0]['descr'];
+        $title = $projdata[0]['title'];
     }
 }
 else
@@ -31,11 +31,13 @@ else
     exit;
 }
 
+require_once("header.php");
+
 $projectid = $_GET['id'];
 
 echo '<section class="section-main">';
 echo '<section class="section-left">';
-echo '<h2>'.$header.'</h2>';
+echo '<h2>'.$projheader.'</h2>';
 
 // взять все дела из works, для которых idprojects равно $_GET["id"]
 $keysvalues = [

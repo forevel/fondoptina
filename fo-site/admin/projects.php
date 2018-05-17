@@ -42,125 +42,174 @@ function updateFiles($id)
 
 $title="Редактор проектов";
 $images = array();
-
-if (isset($_GET['action']))
+$projaction = $_GET['action'];
+$projid = $_GET['id'];
+if (isset($projaction))
 {
-    $_SESSION['proj_action'] = $_GET['action'];
-    if (($_GET['action'] == "edit") && (isset($_GET['id'])))
-        $_SESSION['proj_id'] = $_GET['id'];
-}
-// считать права доступа к сайту через SESSION
-if((isset($_SESSION["rights"])) && (isset($_SESSION['proj_action'])))
-{
-    $action = $_SESSION['proj_action'];
-    if (isset($_POST["submit"]))
+//    $_SESSION['proj_action'] = $projaction;
+//    if (($projaction == "edit") && (isset($projid)))
+//        $_SESSION['proj_id'] = $_GET['id'];
+    // считать права доступа к сайту через SESSION
+    if(isset($_SESSION["rights"]))
     {
-        if (isset($_POST["name"]))
+    //    $action = $_SESSION['proj_action'];
+        if (isset($_POST["submit"]))
         {
-            $keysvalues = array(
-                "name" => $_POST["name"],
-                "cat" => $_POST["cat"],
-                "descr" => $_POST["descr"],
-                "lat" => $_POST["lat"],
-                "log" => $_POST["log"],
-                "idcontent" => $_POST["idcontent"],
-            );
-
-            if ($action == "new")
+            if (isset($_POST["name"]))
             {
-                $row = getValuesByFieldsOrdered("projects", array('name'), array('name' => $_POST['name']));
+    //            $projid = $_SESSION['proj_id'];
+                $keysvalues = array(
+                    "name" => $_POST["name"],
+                    "title" => $_POST["name"],
+                    "descr" => $_POST["name"],
+                    "cat" => $_POST["cat"],
+                    "content" => $_POST["content"],
+                    "lat" => $_POST["lat"],
+                    "log" => $_POST["log"],
+                );
 
-                if ($row == RESULT_ERROR)
+                if ($action == "new")
                 {
-                    fo_error_msg("Selecting info failed. Error: ".mysqli_error($link));
-                    exit;
+                    $row = getValuesByFieldsOrdered("projects", array('name'), array('name' => $_POST['name']));
+
+                    if ($row == RESULT_ERROR)
+                    {
+                        fo_error_msg("Selecting info failed. Error: ".mysqli_error($link));
+                        exit;
+                    }
+                    if ($row != RESULT_EMPTY) // there's already this name in db
+                    {
+                        fo_error_msg("Проект \"".$_POST["name"]."\" уже имеется, попробуйте другой");
+                        exit;
+                    }
+                    else
+                    {
+                        // создаём массив
+                        $projid = newRecord("projects", $keysvalues);
+                        if ($projid != RESULT_ERROR) // всё прошло хорошо
+                        {
+                            updateFiles($projid);
+                        }
+                    }
                 }
-                if ($row != RESULT_EMPTY) // there's already this name in db
+                else if (($projaction == "edit") && isset($projid))
                 {
-                    fo_error_msg("Проект \"".$_POST["name"]."\" уже имеется, попробуйте другой");
-                    exit;
+                    if (updateTableById("projects", $keysvalues, $projid) != RESULT_GOOD)
+                    {
+                        fo_error_msg("Ошибка при записи");
+                        exit;
+                    }
+                    updateFiles($projid);
+                }
+                // обновляем меню
+                // ищем пункт меню "Проекты" и берём его id
+                $result = getValuesByFieldsOrdered("menu", array('id'), array('name' => 'Проекты'));
+                $projmenuid = '0';
+                if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
+                {
+                    $projmenuid = $result[0]['id'];
                 }
                 else
                 {
-                    // создаём массив
-                    $id = newRecord("projects", $keysvalues);
-                    if ($id != RESULT_ERROR) // всё прошло хорошо
+                    fo_error_msg("Ошибка обновления меню");
+                    require_once("projectstable.php");
+                    exit;
+                }
+                // сначала поиск id, у которого name = $_POST['name']
+                $fields = [
+                    'id',
+                ];
+                $keysvalues = [
+                    'name' => $_POST['name'],
+                    'idalias' => $projmenuid,
+                ];
+                $result = getValuesByFieldsOrdered("menu", $fields, $keysvalues);
+                // если нету, то добавление
+                if ($result == RESULT_EMPTY)
+                {
+                    // создаём массив c keysvalues, заданными ранее
+                    var_dump($projid);
+                    $keysvalues = [
+                        'name' => $_POST['name'],
+                        'idalias' => $projmenuid,
+                        'url' => 'projectpage.php?id='.$projid,
+                    ];
+                    $id = newRecord("menu", $keysvalues);
+                    if ($id == RESULT_ERROR)
                     {
-                        updateFiles($id);
+                        fo_error_msg("Ошибка добавления пункта меню");
+                        require_once("projectstable.php");
                         exit;
                     }
                 }
-            }
-            else if (($action == "edit") && isset($_SESSION['proj_id']))
-            {
-                if (updateTableById("projects", $keysvalues, $_SESSION['proj_id']) != RESULT_GOOD)
-                {
-                    fo_error_msg("Ошибка при записи");
-                    exit;
-                }
-                updateFiles($_SESSION['proj_id']);
                 fo_error_msg("Записано успешно!");
                 require_once("projectstable.php");
                 exit;
             }
-        }
-        else
-        {
-            require_once("/index.php");
-            exit;
-        }
-    }
-    else // пока форму не отправляли
-    {
-        if(isset($action))
-        {
-            if ($action == "new")
+            else
             {
-                fo_error_msg("0");
-                // ничего не делаем, вставим потом
+                require_once("/index.php");
+                exit;
             }
-            else if ($action == 'delete')
+        }
+        else // пока форму не отправляли
+        {
+            if(isset($projaction))
             {
-                deleteFromTableById("projects", $_SESSION['proj_id']);
-            }
-            // action = edit
-            else if ($action == "edit")
-            {
-                $fields = array(); // empty array
-                $keysvalues = array(
-                    "id" => $_SESSION['proj_id'],
-                );
-                $result = getValuesByFieldsOrdered("projects", $fields, $keysvalues);
-                if (!$result)
-                    exit;
-                $row = $result[0];
-                $name = $row['name'];
-				$cat = $row['cat'];
-                $descr = $row['descr'];
-                $lat = $row['lat'];
-                $log = $row['log'];
-                $idcontent = $row['idcontent'];
-                $fields = array (
-                    'url',
-                );
-                $keysvalues = array (
-                    'projid' => $_SESSION['proj_id'],
-                );
-                $result = getValuesByFieldsOrdered('projectimages', $fields, $keysvalues);
-//                var_dump($result);
-                if ($result != RESULT_ERROR)
+                if ($projaction == "new")
                 {
-                    if ($result != RESULT_EMPTY)
+                    fo_error_msg("0");
+                    // ничего не делаем, вставим потом
+                }
+                else if (($projaction == 'delete') && isset($projid))
+                {
+                    deleteFromTableById("projects", $projid);
+                    fo_error_msg("Удалено успешно!");
+                    require_once("projectstable.php");
+                    exit;
+                }
+                // action = edit
+                else if ($projaction == "edit")
+                {
+                    $fields = array(); // empty array
+                    $keysvalues = array(
+                        "id" => $projid,
+                    );
+                    $result = getValuesByFieldsOrdered("projects", $fields, $keysvalues);
+                    if (!$result)
+                        exit;
+                    $row = $result[0];
+                    $name = $row['name'];
+                    $cat = $row['cat'];
+                    $descr = $row['descr'];
+                    $title = $row['title'];
+                    $lat = $row['lat'];
+                    $log = $row['log'];
+                    $content = $row['content'];
+                    // вставить сюда потом чтение меню и поиск id элемента, у которого name
+                    // далее запись в базу по этому id
+                    $fields = array (
+                        'url',
+                    );
+                    $keysvalues = array (
+                        'projid' => $projid,
+                    );
+                    $result = getValuesByFieldsOrdered('projectimages', $fields, $keysvalues);
+    //                var_dump($result);
+                    if ($result != RESULT_ERROR)
                     {
-                        foreach($result as $fileurl) {
-                            $images[] = $fileurl['url'];
+                        if ($result != RESULT_EMPTY)
+                        {
+                            foreach($result as $fileurl) {
+                                $images[] = $fileurl['url'];
+                            }
                         }
                     }
-                }
-                else
-                {
-                    fo_error_msg("Произошла ошибка");
-                    exit;
+                    else
+                    {
+                        fo_error_msg("Произошла ошибка");
+                        exit;
+                    }
                 }
             }
         }
@@ -169,7 +218,8 @@ if((isset($_SESSION["rights"])) && (isset($_SESSION['proj_action'])))
 else
 {
     fo_error_msg("Не установлены права либо отсутствует action");
-    require_once("/index.php");
+    fo_error_msg($_SESSION['rights']."__".$_GET['action']);
+    require_once("index.php");
     exit;
 }
 ?>
@@ -178,19 +228,12 @@ else
     <title><?php print $title; ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
-    <script src="/js/map_event.js" type="text/javascript"></script>
 	<script src="/js/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="/js/img_preview.js" type="text/javascript"></script>
+    <script src="/js/map_event.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/css/imgpreview.css">
     <link rel="stylesheet" href="/css/divtable.css">
-    <style>
-        #map
-        {
-            width: 50%; height: 50%; padding: 0; margin: 0;
-        }
-    </style>
-	<script type="text/javascript">
-	</script>
+    <link rel="stylesheet" href="/css/map.css">
 </head>
 <body>
 <h1><?php print $title; ?></h1>
@@ -199,7 +242,7 @@ if(!empty($messages)){
   displayErrors($messages);
 }
 ?>
-<div id="map"></div>
+<div id='yamap'></div>
 <form action="" method="POST" enctype="multipart/form-data">
     <table>
         <tr>
@@ -223,11 +266,7 @@ if(!empty($messages)){
         </tr>
         <tr>
             <td>Описание проекта</td>
-            <td colspan="3"><textarea name="descr"><?php print isset($descr) ? $descr : ""; ?></textarea></td>
-        </tr>
-        <tr>
-            <td>Страница проекта:</td>
-            <td colspan="3"><input type="number" name="idcontent" value="<?php print isset($idcontent) ? $idcontent : "" ; ?>"></td>
+            <td colspan="3"><textarea class="textarea300" name="content"><?php print isset($content) ? $content : ""; ?></textarea></td>
         </tr>
         <tr>
             <td>Фотографии проекта</td>
@@ -261,14 +300,28 @@ if(!empty($messages)){
         fileindex = '<?= $i ?>';
     </script>
     <input type="button" value="Добавить файл" onclick="addFileInput()"><br />
-    <input name="submit" type="submit" value="Submit"><br />
+    <input name="submit" type="submit" value="Отправить в базу"><br />
 </form>
-    <script>window.onload = function() {
-            var f = new File(document.getElementById('file-name1').innerHTML);
-            previewImage(1, f);
+        
+    <?php
+        $fields = [
+                            'url',
+        ];
+        $keysvalues = [
+                            'idcat' => $cat,
+        ];
+        $result = getValuesByFieldsOrdered('symbolpics', $fields, $keysvalues);
+        $pic = '';
+        if ($result != RESULT_ERROR)
+        {
+            if ($result != RESULT_EMPTY)
+            {
+                $pic = $result[0]['url'];
+            }
         }
-    </script>
-    <a href="admin.php">Назад</a>
+        $scriptpic = __DIR__ . "/../upload/". $pic;
+    ?>
+    <a href="projectstable.php">Назад</a>
     <span id="tempout"></span>
     </body>
 </html>

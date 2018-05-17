@@ -83,7 +83,8 @@ function deleteFromTable($table, $field, $value)
     global $link;
     $field = mysqli_real_escape_string($link, $field);
     $value = mysqli_real_escape_string($link, $value);
-    $query = "DELETE FROM `$table` WHERE `$field`=\"$value\";";
+//    $query = "DELETE FROM `$table` WHERE `$field`=\"$value\";";
+    $query = "UPDATE `$table` SET `deleted`='1' WHERE `$field`=\"$value\";";
 //    fo_error_msg ($query);
     $result=mysqli_query($link, $query);
     if (!$result)
@@ -131,9 +132,9 @@ function getValuesByFieldsOrdered($table, $fields=array(), $keysvalues=array(), 
     else // no fields
         $query .= "*"; // selects all if there's no any fields
     $query .= " FROM `$table`";
+    $query .= " WHERE ";
     if (!empty($keysvalues)) // conditions exists
     {
-        $query .= " WHERE ";
         foreach($keysvalues as $key => $value)
         {
             $key = mysqli_real_escape_string($link, $key);
@@ -141,6 +142,10 @@ function getValuesByFieldsOrdered($table, $fields=array(), $keysvalues=array(), 
             $query .= "`$key`".$comparesign."\"$value\" AND ";
         }
         $query = substr($query, 0, -4); // deletes last "AND "
+    }
+    else
+    {
+        $query .= "`deleted`='0' ";
     }
     if (!empty($orderby))
     {

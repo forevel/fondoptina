@@ -169,7 +169,7 @@ if((isset($_SESSION["rights"])) && (isset($_SESSION['work_action'])))
 else
 {
     fo_error_msg("Не установлены права либо отсутствует action");
-    require_once("/index.php");
+    require_once("index.php");
     exit;
 }
 ?>

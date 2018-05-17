@@ -1,17 +1,17 @@
 <?php
 require_once("inc/config.php");
 
-$fields = [
-    'title',
-    'contents',
-];
-
 if (isset($pagename))
+{
+    $fields = [
+        'title',
+        'contents',
+    ];
     $indexedresult = getPageByName($pagename, $fields);
-else
-    $indexedresult = getPageByName('main', $fields);
+    $title = $indexedresult['title'];
+}
+// else $title задаётся из вызывающего файла
 
-$title = $indexedresult['title'];
 
 $fields = [
     'title', // picture
@@ -20,7 +20,6 @@ $fields = [
 $indexedresult = getPageByName('header', $fields);
 $headerimage = '/img/header/' . $indexedresult['title'];
 $header = $indexedresult['contents'];
-
 
 require_once("tpl/header.html");
 

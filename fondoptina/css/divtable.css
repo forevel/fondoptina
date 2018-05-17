@@ -56,3 +56,12 @@
 	display: table-cell;
 	padding: 3px 30px;
 }
+
+.textarea300 {
+    max-width: 600px;  
+    max-height: 300px;   
+    width: 400px;  
+    height: 150px;  
+    min-width: 300px;  
+    min-height: 100px;    
+}

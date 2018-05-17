@@ -7,8 +7,8 @@ require_once(__DIR__ . "/../inc/config.php");
 // считать права доступа к сайту через SESSION
 if(!isset($_SESSION["rights"]))
 {
-//    fo_error_msg("Не установлены права доступа для данного пользователя");
-//    require_once("../inc/logout.php");
+    fo_error_msg("Не установлены права доступа для данного пользователя");
+    require_once(__DIR__ . "/../inc/logout.php");
     exit;
 }
 // если администратор (права 4), дать ссылку редактирования пользователей
