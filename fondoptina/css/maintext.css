@@ -12,3 +12,8 @@ p.smallgray
     color: #648880;
     font-size: 10px;
 }
+
+.bold
+{
+    font-weight: bold;
+}

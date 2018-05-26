@@ -20,5 +20,5 @@ if (!$users)
     echo "Ошибка при получении данных по таблице users";
     exit;
 }
-include(__DIR__ . "/userstable.php");
+include(__DIR__ . "/userstable.html");
 ?>

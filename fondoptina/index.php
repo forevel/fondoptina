@@ -13,7 +13,7 @@ $keysvalues = [
 newRecord('staticpages', $keysvalues);
 */
 
-
+$title = "Фонд Преподобного Амвросия Оптинского - Главная";
 require_once("../fo-site/header.php");
 require_once("../fo-site/main.php");
 require_once("../fo-site/footer.php"); 
