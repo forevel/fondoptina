@@ -30,6 +30,7 @@ else
             <th>Наименование</th>
             <th>Редактор</th>
             <th>Удаление</th>
+            <th>Дела по проекту</th>
         </tr>
         <?php foreach($projects as $p): ?>
         <tr>
@@ -37,6 +38,7 @@ else
             <td><?=$p['name']?></td>
             <td><a href="projects.php?action=edit&id=<?=$p['id']?>">Редактировать</a></td>
             <td><a href="projects.php?action=delete&id=<?=$p['id']?>">Удалить</a></td>
+            <td><a href="workstable.php?id=<?=$p['id']?>">Изменить</a></td>
         </tr>
         <?php endforeach ?>
     </table>

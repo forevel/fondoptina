@@ -5,7 +5,7 @@ require_once(__DIR__ . "/../inc/config.php");
 function updateFiles($id)
 {
     // очищаем базу от старых записей о картинках
-    deleteFromTable('projectimages', 'projid', $id);
+    deleteFromTable('workpics', 'idwork', $id);
     /* надо пройтись по всем полям с именем file-name<?=$i?> и, если они начинаются
      * с "upload/", то записать их в базу по нашему $id */
     for ($i=0; $i<10; $i++)
@@ -21,9 +21,9 @@ function updateFiles($id)
 //            echo ("!");
             $keysvalues = array(
                 'url' => $filename,
-                'projid' => $id,
+                'idwork' => $id,
             );
-            newRecord('projectimages', $keysvalues);
+            newRecord('workpics', $keysvalues);
         }
     }
     // теперь пишем картинки в базу
@@ -33,42 +33,47 @@ function updateFiles($id)
         {
             $keysvalues = array(
                 'url' => $newfilename,
-                'projid' => $id,
+                'idwork' => $id,
             );
-            newRecord('projectimages', $keysvalues);
+            newRecord('workpics', $keysvalues);
         }
     }
 }
 
 $title="Редактор работ";
 $images = array();
+$workid = $id;
 
 if (isset($_GET['action']))
 {
-    $_SESSION['work_action'] = $_GET['action'];
-    if (($_GET['action'] == "edit") && (isset($_GET['id'])))
-        $_SESSION['work_id'] = $_GET['id'];
+    $workaction = $_GET['action'];
 }
+
 // считать права доступа к сайту через SESSION
-if((isset($_SESSION["rights"])) && (isset($_SESSION['work_action'])))
+if((isset($_SESSION["rights"])) && (isset($workaction)))
 {
-    $action = $_SESSION['work_action'];
     if (isset($_POST["submit"]))
     {
         if (isset($_POST["name"]))
         {
             $keysvalues = array(
                 "name" => $_POST["name"],
-                "cat" => $_POST["cat"],
+                "idprojects" => $_POST["idprojects"],
                 "descr" => $_POST["descr"],
-                "lat" => $_POST["lat"],
-                "log" => $_POST["log"],
-                "idcontent" => $_POST["idcontent"],
+                "moneyneed" => $_POST["moneyneed"],
+                "moneygot" => $_POST["moneygot"],
+                "workprogress" => $_POST["workprogress"],
+                "moneystarted" => $_POST["moneystarted"],
+                "moneyfinished" => $_POST["moneyfinished"],
+                "workstarted" => $_POST["workstarted"],
+                "workfinished" => $_POST["workfinished"],
+                "pic" => $_POST["pic"],
+                "picfull" => $_POST["picfull"],
             );
 
-            if ($action == "new")
+            if ($workaction == "new")
             {
-                $row = getValuesByFieldsOrdered("projects", array('name'), array('name' => $_POST['name']));
+                $row = getValuesByFieldsOrdered("works", array('name'), array('name' => $_POST['name']));
 
                 if ($row == RESULT_ERROR)
                 {
@@ -77,30 +82,30 @@ if((isset($_SESSION["rights"])) && (isset($_SESSION['work_action'])))
                 }
                 if ($row != RESULT_EMPTY) // there's already this name in db
                 {
-                    fo_error_msg("Проект \"".$_POST["name"]."\" уже имеется, попробуйте другой");
+                    fo_error_msg("Работа \"".$_POST["name"]."\" уже имеется, попробуйте другую");
                     exit;
                 }
                 else
                 {
                     // создаём массив
-                    $id = newRecord("projects", $keysvalues);
-                    if ($id != RESULT_ERROR) // всё прошло хорошо
+                    $workid = newRecord("works", $keysvalues);
+                    if ($workid != RESULT_ERROR) // всё прошло хорошо
                     {
-                        updateFiles($id);
+                        updateFiles($workid);
                         exit;
                     }
                 }
             }
-            else if (($action == "edit") && isset($_SESSION['proj_id']))
+            else if (($workaction == "edit") && isset($workid))
             {
-                if (updateTableById("projects", $keysvalues, $_SESSION['proj_id']) != RESULT_GOOD)
+                if (updateTableById("works", $keysvalues, $workid) != RESULT_GOOD)
                 {
                     fo_error_msg("Ошибка при записи");
                     exit;
                 }
-                updateFiles($_SESSION['proj_id']);
+                updateFiles($workid);
                 fo_error_msg("Записано успешно!");
-                require_once("projectstable.php");
+                require_once("workstable.php");
                 exit;
             }
         }
@@ -112,41 +117,47 @@ if((isset($_SESSION["rights"])) && (isset($_SESSION['work_action'])))
     }
     else // пока форму не отправляли
     {
-        if(isset($action))
+        if(isset($workaction))
         {
-            if ($action == "new")
+            if ($workaction == "new")
             {
                 fo_error_msg("0");
                 // ничего не делаем, вставим потом
             }
-            else if ($action == 'delete')
+            else if (($workaction == 'delete') && isset($workid))
             {
-                deleteFromTableById("projects", $_SESSION['proj_id']);
+                deleteFromTableById("works", $workid);
             }
             // action = edit
-            else if ($action == "edit")
+            else if (($workaction == "edit") && isset($workid))
             {
                 $fields = array(); // empty array
                 $keysvalues = array(
-                    "id" => $_SESSION['proj_id'],
+                    "id" => $workid,
                 );
-                $result = getValuesByFieldsOrdered("projects", $fields, $keysvalues);
+                $result = getValuesByFieldsOrdered("works", $fields, $keysvalues);
                 if (!$result)
                     exit;
                 $row = $result[0];
                 $name = $row['name'];
-				$cat = $row['cat'];
-                $descr = $row['descr'];
-                $lat = $row['lat'];
-                $log = $row['log'];
-                $idcontent = $row['idcontent'];
+                $idprojects = $row['idprojects'],
+                $descr => $row['descr'],
+                $moneyneed => $_POST['moneyneed'],
+                $moneygot => $_POST['moneygot'],
+                $workprogress => $_POST['workprogress'],
+                $moneystarted => $_POST['moneystarted'],
+                $moneyfinished => $_POST['moneyfinished'],
+                $workstarted => $_POST['workstarted'],
+                $workfinished => $_POST['workfinished'],
+                $pic => $_POST['pic'],
+                $picfull => $_POST['picfull'],
                 $fields = array (
                     'url',
                 );
                 $keysvalues = array (
-                    'projid' => $_SESSION['proj_id'],
+                    'idworks' => $workid,
                 );
-                $result = getValuesByFieldsOrdered('projectimages', $fields, $keysvalues);
+                $result = getValuesByFieldsOrdered('workpics', $fields, $keysvalues);
 //                var_dump($result);
                 if ($result != RESULT_ERROR)
                 {
@@ -172,70 +183,66 @@ else
     require_once("index.php");
     exit;
 }
+if (isset($idprojects))
+{
+    $result = getValuesByFieldsOrdered('projects', array('name'), array('id' => $idprojects));
+    if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
+        $projectname = $result[0]['name'];
+}
 ?>
 <html>
 <head>
     <title><?php print $title; ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
-    <script src="/js/map_event.js" type="text/javascript"></script>
-	<script src="/js/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="/js/img_preview.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/css/imgpreview.css">
     <link rel="stylesheet" href="/css/divtable.css">
-    <style>
-        #map
-        {
-            width: 50%; height: 50%; padding: 0; margin: 0;
-        }
-    </style>
-	<script type="text/javascript">
-	</script>
 </head>
 <body>
-<h1><?php print $title; ?></h1>
-<?php
-if(!empty($messages)){
-  displayErrors($messages);
-}
-?>
-<div id="map"></div>
+<h1>Проект: <?php print (isset($projectname)) ? $projectname : "неизвестно"; } ?></h1>
 <form action="" method="POST" enctype="multipart/form-data">
     <table>
         <tr>
-            <td>Наименование проекта:</td>
+            <td>Наименование работы:</td>
             <td><input type="text" name="name" value="<?php print isset($name) ? $name : "" ; ?>"></td>
         </tr>
         <tr>
-            <td>Местонахождение. Широта:</td>
-            <td><input id="lat" name="lat" value="<?php print isset($lat) ? $lat : ""; ?>"></td>
-            <td> Долгота:</td>
-            <td><input id="log" name="log" value="<?php print isset($log) ? $log : ""; ?>"></td>
+            <td>Требуется денег:</td>
+            <td><input id="moneyneed" name="moneyneed" value="<?php print isset($moneyneed) ? $moneyneed : ""; ?>"></td>
         </tr>
         <tr>
-            <td>Тип проекта:</td>
-            <td><select name="cat">
-                <option value="0" <?php print (isset($cat) && ($cat == 0)) ? "selected" : "" ?>>Дети</option>
-                <option value="1" <?php print (isset($cat) && ($cat == 1)) ? "selected" : "" ?>>Семьи</option>
-                <option value="2" <?php print (isset($cat) && ($cat == 2)) ? "selected" : "" ?>>Церкви</option>
-                <option value="3" <?php print (isset($cat) && ($cat == 3)) ? "selected" : "" ?>>Здания</option>
-            </select></td>
+            <td>Собрано денег:</td>
+            <td><input id="moneygot" name="moneygot" value="<?php print isset($moneygot) ? $moneygot : ""; ?>"></td>
         </tr>
         <tr>
-            <td>Описание проекта</td>
+            <td>Работа выполнена на</td>
+            <td><input id="workprogress" name="workprogress" value="<?php print isset($workprogress) ? $workprogress : ""; ?>"></td>
+            <td>процентов</td>
+        </tr>
+        <tr>
+            <td>Начали собирать (дата):</td>
+            <td><input type="date" id="moneystarted" name="moneystarted" value="<?php print isset($moneystarted) ? $moneystarted : ""; ?>"></td>
+        </tr>
+        <tr>
+            <td>Закончили собирать (дата):</td>
+            <td><input type="date" id="moneyfinished" name="moneyfinished" value="<?php print isset($moneyfinished) ? $moneyfinished : ""; ?>"></td>
+        </tr>
+        <tr>
+            <td>Работы начаты (дата):</td>
+            <td><input type="date" id="workstarted" name="workstarted" value="<?php print isset($workstarted) ? $workstarted : ""; ?>"></td>
+        </tr>
+        <tr>
+            <td>Работы закончены (дата):</td>
+            <td><input type="date" id="workfinished" name="workfinished" value="<?php print isset($workfinished) ? $workfinished : ""; ?>"></td>
+        </tr>
+        <tr>
+            <td>Описание работы</td>
             <td colspan="3"><textarea name="descr"><?php print isset($descr) ? $descr : ""; ?></textarea></td>
-        </tr>
-        <tr>
-            <td>Страница проекта:</td>
-            <td colspan="3"><input type="number" name="idcontent" value="<?php print isset($idcontent) ? $idcontent : "" ; ?>"></td>
         </tr>
         <tr>
             <td>Фотографии проекта</td>
         </tr>
-        <tr>
     </table>
-    <br />
-    
     <div id="fileinputs">
         <script>
             var fileindex = 0;
@@ -268,7 +275,7 @@ if(!empty($messages)){
             previewImage(1, f);
         }
     </script>
-    <a href="admin.php">Назад</a>
+    <a href="workstable.php">Назад</a>
     <span id="tempout"></span>
     </body>
 </html>
