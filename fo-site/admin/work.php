@@ -42,11 +42,11 @@ function updateFiles($id)
 
 $title="Редактор работ";
 $images = array();
-$workid = $id;
 
 if (isset($_GET['action']))
 {
     $workaction = $_GET['action'];
+    $workid = $_GET['id'];
 }
 
 // считать права доступа к сайту через SESSION
@@ -140,22 +140,22 @@ if((isset($_SESSION["rights"])) && (isset($workaction)))
                     exit;
                 $row = $result[0];
                 $name = $row['name'];
-                $idprojects = $row['idprojects'],
-                $descr => $row['descr'],
-                $moneyneed => $_POST['moneyneed'],
-                $moneygot => $_POST['moneygot'],
-                $workprogress => $_POST['workprogress'],
-                $moneystarted => $_POST['moneystarted'],
-                $moneyfinished => $_POST['moneyfinished'],
-                $workstarted => $_POST['workstarted'],
-                $workfinished => $_POST['workfinished'],
-                $pic => $_POST['pic'],
-                $picfull => $_POST['picfull'],
+                $idprojects = $row['idprojects'];
+                $descr = $row['descr'];
+                $moneyneed = $row['moneyneed'];
+                $moneygot = $row['moneygot'];
+                $workprogress = $row['workprogress'];
+                $moneystarted = $row['moneystarted'];
+                $moneyfinished = $row['moneyfinished'];
+                $workstarted = $row['workstarted'];
+                $workfinished = $row['workfinished'];
+                $pic = $row['pic'];
+                $picfull = $row['picfull'];
                 $fields = array (
                     'url',
                 );
                 $keysvalues = array (
-                    'idworks' => $workid,
+                    'idwork' => $workid,
                 );
                 $result = getValuesByFieldsOrdered('workpics', $fields, $keysvalues);
 //                var_dump($result);
@@ -199,7 +199,7 @@ if (isset($idprojects))
     <link rel="stylesheet" href="/css/divtable.css">
 </head>
 <body>
-<h1>Проект: <?php print (isset($projectname)) ? $projectname : "неизвестно"; } ?></h1>
+<h1>Проект: <?php print (isset($projectname)) ? $projectname : "неизвестно"; ?></h1>
 <form action="" method="POST" enctype="multipart/form-data">
     <table>
         <tr>

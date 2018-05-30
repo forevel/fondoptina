@@ -1,0 +1,36 @@
+<h1><?=$result[0]['name']?></h1>
+<table class="workinnertable">
+<!-- и нарисовать два прогрессбара: один с деньгами с процентом из .moneygot/.moneyneed -->
+    <?php $wpercent = $result[0]['moneygot'] / $result[0]['moneyneed'] * 100; ?>
+    <tr class="buttonstr">
+        <td class="buttonstd"><p class="worktext">Собрано <?=$result[0]['moneygot']?> из <?=$result[0]['moneyneed']?> руб</p>
+            <div class="workprogress">
+                <div class="workbar" id="wb">
+                </div>
+            </div>
+        </td>
+<!-- и второй - с прогрессом дела из .workprogress -->
+    <?php $wwpercent = $result[0]['workprogress']; ?>
+        <td class="buttonstd"><p class="worktext">Работы выполнены на <?=$wwpercent?> %</p>
+            <div class="workprogress">
+                <div class="workbar glow shine" id="wba">
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<table class="workinnertable">
+    <script type='text/javascript'>
+        setprogressbar("wb", <?=$wpercent?>)
+        setprogressbar("wba", <?=$wwpercent?>)
+    </script>
+
+    <tr class="buttonstr">
+        <td class="buttonstd">
+            <input class="contribbutton" type="image" src="/img/pig.png" width="48px" title="Сделать взнос" onclick="javascript:location='contribute.php?projid=<?=$projectid?>&id=<?=$r['id']?>&type=contrib';" /><br />
+        </td>
+        <td class="buttonstd">
+            <input class="contribbutton" type="image" src="/img/handshake.png" width="48px" title="Другие способы" onclick="javascript:location='contribute.php?projid=<?=$projectid?>&id=<?=$r['id']?>&type=help';" /><br />
+        </td>
+    </tr>
+</table>

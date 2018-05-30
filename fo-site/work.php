@@ -33,7 +33,7 @@ else
 echo '<section class="section-main">';
 echo '<section class="section-left">';
 
-echo '<table><tr><td>';
+// echo '<table><tr><td>';
 // взять все дела из works, для которых idprojects равно $_GET["id"]
 $keysvalues = [
     'id' => $workid,
@@ -41,9 +41,9 @@ $keysvalues = [
 $result = getValuesByFieldsOrdered('works', array(), $keysvalues);
 if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
 {
-    require_once("works.html");
+    require_once(__DIR__ . "/tpl/workhorizontal.html");
 }
-echo '</td><td>';
+// echo '</td><td>';
 $fields = [
     'url',
 ];
@@ -59,14 +59,14 @@ if (($workpics != RESULT_ERROR) && ($workpics != RESULT_EMPTY))
     foreach($workpics as $w)
     {
         echo '<td class="blocktd">';
-        echo '<a target="_blank" href='.$w['url'].'><img src='.$w['url'].' /></a>';
+        echo '<a target="_blank" href='.$w['url'].'><img src=image.php?filename='.$w['url'].' /></a>';
         echo '</td>';
     }
     echo '</tr></table>';
 }
 require_once("aside.php");
 require_once("tpl/main.html");
-echo '</td></tr></table>';
+// echo '</td></tr></table>';
 require_once("tpl/aside.html");
 require_once("footer.php"); 
 

@@ -32,7 +32,7 @@ else
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <title>Редактирование работч</title>
+    <title>Редактирование работ</title>
     <meta charset="UTF-8">
 </head>
 
@@ -51,8 +51,8 @@ else
         <tr>
             <td><?=$w['id']?></td>
             <td><?=$w['name']?></td>
-            <td><a href="work.php?action=edit&id=<?=$w['id']?>">Редактировать</a></td>
-            <td><a href="work.php?action=delete&id=<?=$w['id']?>">Удалить</a></td>
+            <td><a href="editwork.php?action=edit&id=<?=$w['id']?>">Редактировать</a></td>
+            <td><a href="editwork.php?action=delete&id=<?=$w['id']?>">Удалить</a></td>
         </tr>
         <?php endforeach ?>
     </table>

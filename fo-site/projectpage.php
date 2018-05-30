@@ -46,7 +46,7 @@ $keysvalues = [
 $result = getValuesByFieldsOrdered('works', array(), $keysvalues);
 if (($result != RESULT_ERROR) && ($result != RESULT_EMPTY))
 {
-    require_once("works.html");
+    require_once("tpl/works.html");
 }
 
 require_once("aside.php");

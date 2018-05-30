@@ -1,6 +1,6 @@
 <?php
 $file = $_GET['filename'];
 header("Content-type: image/jpeg");
-$im=imageCreateFromJPEG(__DIR__ . '/../fo-site/' . $file);
-imageJPEG($im);
+$im=imagecreatefromjpeg(__DIR__ . '/../fo-site/' . $file);
+imagejpeg($im);
 ?>
