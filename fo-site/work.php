@@ -55,14 +55,18 @@ $keysvalues = [
 $workpics = getValuesByFieldsOrdered('workpics', $fields, $keysvalues);
 if (($workpics != RESULT_ERROR) && ($workpics != RESULT_EMPTY))
 {
-    echo '<table><tr>';
+    $counter = 0;
+    echo '<div id="slider"><ul id="sliderul">';
     foreach($workpics as $w)
     {
-        echo '<td class="blocktd">';
-        echo '<a target="_blank" href='.$w['url'].'><img src=image.php?filename='.$w['url'].' /></a>';
-        echo '</td>';
+/*        echo '<td class="blocktd">';
+        echo '<a target="_blank" href="image.php?filename='.$w['url'].'"><img src=image.php?filename='.$w['url'].' /></a>';
+        echo '</td>'; */
+        require_once(__DIR__ . "/tpl/sliderpic.html");
+        $counter++;
     }
-    echo '</tr></table>';
+    echo '</ul></div>';
+    echo '<script type="text/javascript">InitSlides()</script>';
 }
 require_once("aside.php");
 require_once("tpl/main.html");

@@ -1,47 +1,12 @@
 <?php
 /* Редактирование проектов */
 require_once(__DIR__ . "/../inc/config.php");
-
-function updateFiles($id)
-{
-    // очищаем базу от старых записей о картинках
-    deleteFromTable('workpics', 'idwork', $id);
-    /* надо пройтись по всем полям с именем file-name<?=$i?> и, если они начинаются
-     * с "upload/", то записать их в базу по нашему $id */
-    for ($i=0; $i<10; $i++)
-    {
-        $filename = 'file-name' . $i;
-//        echo ($filename);
-        if (isset($_POST[$filename]))
-        {
-            $filename = $_POST[$filename];
-//            echo ($filename);
-            if (strpos($filename, 'upload/') === false) // нет подстроки
-                continue;
-//            echo ("!");
-            $keysvalues = array(
-                'url' => $filename,
-                'idwork' => $id,
-            );
-            newRecord('workpics', $keysvalues);
-        }
-    }
-    // теперь пишем картинки в базу
-//    var_dump($_FILES);
-    foreach($_FILES as $file) {
-        if (($newfilename = uploadFile($file)) != RESULT_ERROR)
-        {
-            $keysvalues = array(
-                'url' => $newfilename,
-                'idwork' => $id,
-            );
-            newRecord('workpics', $keysvalues);
-        }
-    }
-}
+require_once(__DIR__ . "/../inc/images.php");
+require_once(__DIR__ . "/../inc/files.php");
 
 $title="Редактор работ";
 $images = array();
+$workpostfile = __DIR__.'/workpost.php';
 
 if (isset($_GET['action']))
 {
@@ -52,127 +17,68 @@ if (isset($_GET['action']))
 // считать права доступа к сайту через SESSION
 if((isset($_SESSION["rights"])) && (isset($workaction)))
 {
-    if (isset($_POST["submit"]))
+    if(isset($workaction))
     {
-        if (isset($_POST["name"]))
+        if ($workaction == "new")
         {
+            fo_error_msg("0");
+            // ничего не делаем, вставим потом
+        }
+        else if (($workaction == 'delete') && isset($workid))
+        {
+            deleteFromTableById("works", $workid);
+        }
+        // action = edit
+        else if (($workaction == "edit") && isset($workid))
+        {
+            $fields = array(); // empty array
             $keysvalues = array(
-                "name" => $_POST["name"],
-                "idprojects" => $_POST["idprojects"],
-                "descr" => $_POST["descr"],
-                "moneyneed" => $_POST["moneyneed"],
-                "moneygot" => $_POST["moneygot"],
-                "workprogress" => $_POST["workprogress"],
-                "moneystarted" => $_POST["moneystarted"],
-                "moneyfinished" => $_POST["moneyfinished"],
-                "workstarted" => $_POST["workstarted"],
-                "workfinished" => $_POST["workfinished"],
-                "pic" => $_POST["pic"],
-                "picfull" => $_POST["picfull"],
+                "id" => $workid,
+                "deleted" => "0",
             );
-
-            if ($workaction == "new")
-            {
-                $row = getValuesByFieldsOrdered("works", array('name'), array('name' => $_POST['name']));
-
-                if ($row == RESULT_ERROR)
-                {
-                    fo_error_msg("Selecting info failed. Error: ".mysqli_error($link));
-                    exit;
-                }
-                if ($row != RESULT_EMPTY) // there's already this name in db
-                {
-                    fo_error_msg("Работа \"".$_POST["name"]."\" уже имеется, попробуйте другую");
-                    exit;
-                }
-                else
-                {
-                    // создаём массив
-                    $workid = newRecord("works", $keysvalues);
-                    if ($workid != RESULT_ERROR) // всё прошло хорошо
-                    {
-                        updateFiles($workid);
-                        exit;
-                    }
-                }
-            }
-            else if (($workaction == "edit") && isset($workid))
-            {
-                if (updateTableById("works", $keysvalues, $workid) != RESULT_GOOD)
-                {
-                    fo_error_msg("Ошибка при записи");
-                    exit;
-                }
-                updateFiles($workid);
-                fo_error_msg("Записано успешно!");
-                require_once("workstable.php");
+            $result = getValuesByFieldsOrdered("works", $fields, $keysvalues);
+            if (!$result)
                 exit;
-            }
-        }
-        else
-        {
-            require_once("/index.php");
-            exit;
-        }
-    }
-    else // пока форму не отправляли
-    {
-        if(isset($workaction))
-        {
-            if ($workaction == "new")
-            {
-                fo_error_msg("0");
-                // ничего не делаем, вставим потом
-            }
-            else if (($workaction == 'delete') && isset($workid))
-            {
-                deleteFromTableById("works", $workid);
-            }
-            // action = edit
-            else if (($workaction == "edit") && isset($workid))
-            {
-                $fields = array(); // empty array
-                $keysvalues = array(
-                    "id" => $workid,
-                );
-                $result = getValuesByFieldsOrdered("works", $fields, $keysvalues);
-                if (!$result)
-                    exit;
-                $row = $result[0];
-                $name = $row['name'];
-                $idprojects = $row['idprojects'];
-                $descr = $row['descr'];
-                $moneyneed = $row['moneyneed'];
-                $moneygot = $row['moneygot'];
-                $workprogress = $row['workprogress'];
-                $moneystarted = $row['moneystarted'];
-                $moneyfinished = $row['moneyfinished'];
-                $workstarted = $row['workstarted'];
-                $workfinished = $row['workfinished'];
-                $pic = $row['pic'];
-                $picfull = $row['picfull'];
-                $fields = array (
-                    'url',
-                );
-                $keysvalues = array (
-                    'idwork' => $workid,
-                );
-                $result = getValuesByFieldsOrdered('workpics', $fields, $keysvalues);
+            $row = $result[0];
+            $name = $row['name'];
+            $idprojects = $row['idprojects'];
+            $descr = $row['descr'];
+            $moneyneed = $row['moneyneed'];
+            $moneygot = $row['moneygot'];
+            $workprogress = $row['workprogress'];
+            $moneystarted = $row['moneystarted'];
+            $moneyfinished = $row['moneyfinished'];
+            $workstarted = $row['workstarted'];
+            $workfinished = $row['workfinished'];
+            $pic = $row['pic'];
+            $picfull = $row['picfull'];
+            $fields = array (
+                'url',
+            );
+            $keysvalues = array (
+                'idwork' => $workid,
+                "deleted" => "0",
+            );
+//                var_dump($keysvalues);
+            $result = getValuesByFieldsOrdered('workpics', $fields, $keysvalues);
 //                var_dump($result);
-                if ($result != RESULT_ERROR)
+            if ($result != RESULT_ERROR)
+            {
+                if ($result != RESULT_EMPTY)
                 {
-                    if ($result != RESULT_EMPTY)
-                    {
-                        foreach($result as $fileurl) {
-                            $images[] = $fileurl['url'];
-                        }
+                    foreach($result as $fileurl) {
+                        $images[] = $fileurl['url'];
                     }
                 }
-                else
+/*                else
                 {
-                    fo_error_msg("Произошла ошибка");
-                    exit;
-                }
+                    fo_error_msg("Результат пустой");
+                } */
+            }
+            else
+            {
+                fo_error_msg("Произошла ошибка");
+                exit;
             }
         }
     }
@@ -200,7 +106,7 @@ if (isset($idprojects))
 </head>
 <body>
 <h1>Проект: <?php print (isset($projectname)) ? $projectname : "неизвестно"; ?></h1>
-<form action="" method="POST" enctype="multipart/form-data">
+<form action="workpost.php" method="POST" enctype="multipart/form-data">
     <table>
         <tr>
             <td>Наименование работы:</td>
@@ -240,24 +146,39 @@ if (isset($idprojects))
             <td colspan="3"><textarea name="descr"><?php print isset($descr) ? $descr : ""; ?></textarea></td>
         </tr>
         <tr>
-            <td>Фотографии проекта</td>
+            <td>Главная фотография работы<br />
+                <div class="file-form-wrap divtable" id="fileinputdiv0">
+                    <div class="file-upload">
+                        <label>
+                            <input type="file" name="mainpic" onchange="previewImage('mainpic', this.files[0]);" />
+                            <span>Выберите файл</span><br />
+                        </label>
+                    </div>
+                    <input name="mainpic_name" id="mainpic_name" class="divtablecell" value="<?php print isset($picfull) ? $picfull : '' ?>" />
+                    <div class="divtablecell preview-img"><img class="preview-img" id="mainpic_preview" src="<?php print isset($picfull) ? 'image.php?filename=' . $picfull : '' ?>" /></div>
+                    <div id="mainpic_size" class="divtablecell">&nbsp;</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>Фотографии к работе</td>
         </tr>
     </table>
     <div id="fileinputs">
         <script>
-            var fileindex = 0;
+            var fileindex = 0; // для функций img_preview
         </script>
-        <?php $i = 0; foreach($images as $image) : ?>
+        <?php $i = 1; foreach($images as $image) : ?>
         <div class="file-form-wrap divtable" id="fileinputdiv<?=$i?>">
             <div class="file-upload">
                 <label>
-                    <input id="uploaded-file<?=$i?>" type="file" name="image<?=$i?>" onchange="previewImage(<?=$i?>, this.files[0]);" />
+                    <input id="workpic<?=$i?>" type="file" name="workpic<?=$i?>" onchange="previewImage('workpic<?=$i?>', this.files[0]);" />
                     <span>Выберите файл</span><br />
                 </label>
             </div>
-            <input name="file-name<?=$i?>" id="file-name<?=$i?>" class="divtablecell" value="<?php print isset($image) ? $image : '' ?>" />
-            <div class="divtablecell preview-img"><img class="preview-img" id="imgP<?=$i?>" src="<?php print isset($image) ? 'image.php?filename=' . $image : '' ?>" /></div>
-            <div id="file-size<?=$i?>" class="divtablecell">&nbsp;</div>
+            <input name="workpic<?=$i?>_name" id="workpic<?=$i?>_name" class="divtablecell" value="<?php print isset($image) ? $image : '' ?>" />
+            <div class="divtablecell preview-img"><img class="preview-img" id="workpic<?=$i?>_preview" src="<?php print isset($image) ? 'image.php?filename=' . $image : '' ?>" /></div>
+            <div id="workpic<?=$i?>_size" class="divtablecell">&nbsp;</div>
             <div class="divtablecell"><input type="button" value="Удалить файл" onclick="removeFileInput(<?=$i?>)" /></div>
         </div>
         <br />
@@ -267,14 +188,12 @@ if (isset($idprojects))
     <script>
         fileindex = '<?= $i ?>';
     </script>
-    <input type="button" value="Добавить файл" onclick="addFileInput()"><br />
-    <input name="submit" type="submit" value="Submit"><br />
+    <input type="button" value="Добавить файл" onclick="addFileInput(<?=UPLOAD_FILE_MAX?>)"><br />
+    <input name="submit" type="submit" value="Отправить в базу данных"><br />
+    <input type="hidden" name="workaction" value="<?=$workaction?>">
+    <input type="hidden" name="projid" value="<?=$idprojects?>">
+    <input type="hidden" name="workid" value="<?=$workid?>">
 </form>
-    <script>window.onload = function() {
-            var f = new File(document.getElementById('file-name1').innerHTML);
-            previewImage(1, f);
-        }
-    </script>
     <a href="workstable.php">Назад</a>
     <span id="tempout"></span>
     </body>

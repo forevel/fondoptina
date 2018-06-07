@@ -78,13 +78,19 @@ function deleteFromTableById($table, $id)
     return deleteFromTable($table, 'id', $id);
 }
 
-function deleteFromTable($table, $field, $value)
+function deleteFromTable($table, $field, $value, $real=0)
 {
     global $link;
     $field = mysqli_real_escape_string($link, $field);
     $value = mysqli_real_escape_string($link, $value);
-//    $query = "DELETE FROM `$table` WHERE `$field`=\"$value\";";
-    $query = "UPDATE `$table` SET `deleted`='1' WHERE `$field`=\"$value\";";
+    if ($real)
+    {
+        $query = "DELETE FROM `$table` WHERE `$field`=\"$value\";";
+    }
+    else
+    {
+        $query = "UPDATE `$table` SET `deleted`='1' WHERE `$field`=\"$value\";";
+    }
 //    fo_error_msg ($query);
     $result=mysqli_query($link, $query);
     if (!$result)

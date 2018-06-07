@@ -44,6 +44,7 @@ $title="Редактор проектов";
 $images = array();
 $projaction = $_GET['action'];
 $projid = $_GET['id'];
+$_SESSION['projid'] = $projid;
 if (isset($projaction))
 {
 //    $_SESSION['proj_action'] = $projaction;

@@ -3,9 +3,10 @@
 require_once(__DIR__ . "/../inc/config.php");
 // считать права доступа к сайту через SESSION
 $projid = $id;
+$_SESSION['projid'] = $projid;
 if ((isset($_SESSION["rights"])) && (isset($projid)))
 {
-    var_dump($projid);
+//    var_dump($projid);
     $works = getValuesByFieldsOrdered("works", array('name', 'id'), array('idprojects' => $projid));
     if ($works == RESULT_ERROR)
     {
@@ -26,6 +27,7 @@ else
 {
     fo_error_msg("Не заданы права пользователя");
     require_once(__DIR__ . "/../inc/login.php");
+    exit;
 }
 ?>
 

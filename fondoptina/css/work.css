@@ -63,40 +63,6 @@
         -webkit-animation: animate-shine 2s ease-out infinite;
         -moz-animation: animate-shine 2s ease-out infinite;
 }
-/* 
-@-webkit-keyframes animate-shine {
-        0% {opacity: 0; width: 0;}
-        50% {opacity: .5;}
-        100% {opacity: 0; width: 95%;}
-}
- 
-@-moz-keyframes animate-shine {
-        0% {opacity: 0; width: 0;}
-        50% {opacity: .5;}
-        100% {opacity: 0; width: 95%;}
-}
-*/
-/*.glow {
-        -moz-box-shadow: 0 5px 5px rgba(255, 255, 255, .3) inset, 0 -5px 5px rgba(255, 255, 255, .3) inset;
-        -webkit-box-shadow: 0 5px 5px rgba(255, 255, 255, .3) inset, 0 -5px 5px rgba(255, 255, 255, .3) inset;
-        box-shadow: 0 5px 5px rgba(255, 255, 255, .3) inset, 0 -5px 5px rgba(255, 255, 255, .3) inset;
-        -webkit-animation: animate-glow 1s ease-out infinite;
-        -moz-animation: animate-glow 1s ease-out infinite;
-}
-*/
-/*
-@-webkit-keyframes animate-glow {
- 0% { -webkit-box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;}
- 50% { -webkit-box-shadow: 0 5px 5px rgba(255, 255, 255, .3) inset, 0 -5px 5px rgba(255, 255, 255, .3) inset;}
- 100% { -webkit-box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;}
- }
- 
-@-moz-keyframes animate-glow {
- 0% { -moz-box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;}
- 50% { -moz-box-shadow: 0 5px 5px rgba(255, 255, 255, .3) inset, 0 -5px 5px rgba(255, 255, 255, .3) inset;}
- 100% { -moz-box-shadow: 0 5px 5px rgba(255, 255, 255, .7) inset, 0 -5px 5px rgba(255, 255, 255, .7) inset;}
- }
-*/
 
 .workinnertable {
     margin: 15px 15px;
@@ -139,4 +105,32 @@
 
 .blocktd {
     display: block;
+}
+
+#sliderul {
+    position: relative;
+    height: 300px;
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
+}
+
+.slide {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 1;
+    
+    -webkit-transition: opacity 3s;
+    -moz-transition: opacity 3s;
+    -o-transition: opacity 3s;
+    transition: opacity 3s;
+}
+
+.showing {
+    opacity: 1;
+    z-index: 2;
 }

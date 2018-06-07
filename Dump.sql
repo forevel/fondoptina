@@ -249,6 +249,7 @@ CREATE TABLE `workpics` (
   `id` int(11) NOT NULL,
   `url` text,
   `idwork` int(11) DEFAULT NULL,
+  `deleted` int(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -259,7 +260,7 @@ CREATE TABLE `workpics` (
 
 LOCK TABLES `workpics` WRITE;
 /*!40000 ALTER TABLE `workpics` DISABLE KEYS */;
-INSERT INTO `workpics` VALUES (1,'/img/christ.png',1);
+INSERT INTO `workpics` VALUES (1,'upload/18/06/06/476_n.jpg',1,0),(2,'upload/18/06/07/16.jpg',2,0);
 /*!40000 ALTER TABLE `workpics` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -297,7 +298,7 @@ CREATE TABLE `works` (
 
 LOCK TABLES `works` WRITE;
 /*!40000 ALTER TABLE `works` DISABLE KEYS */;
-INSERT INTO `works` VALUES (1,2,'Спортзал','<h2>Спортзал</h2><p>Спортзал в школе находится в плачевном состоянии</p>',15000,7000,70,'2018-05-06','0000-00-00','0000-00-00','0000-00-00','/img/IMG_8168.png','/img/IMG_8168_full.JPG',0),(2,2,'Спортзал2','Спортзал2',3750,2000,25,'2018-05-07','0000-00-00','0000-00-00','0000-00-00','/img/IMG_9129.jpg','/img/IMG_9129_full.JPG',0);
+INSERT INTO `works` VALUES (1,2,'Спортзал','<h2>Спортзал</h2><p>Спортзал в школе находится в плачевном состоянии</p>',15000,7000,70,'2018-05-06','0000-00-00','0000-00-00','0000-00-00','18216920_small.png','upload/18/06/06/18216920.png',0),(2,2,'Спортзал2','Спортзал2',3750,2000,25,'2018-05-07','0000-00-00','0000-00-00','0000-00-00','17_small.jpg','upload/18/06/07/17.jpg',0);
 /*!40000 ALTER TABLE `works` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -310,4 +311,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-26 22:12:25
+-- Dump completed on 2018-06-07 10:00:36

@@ -1,40 +1,34 @@
 /* http://webcodius.ru/recepty-dlya-sajta/stilizaciya-input-file-css-stilizaciya-polya-dlya-zagruzki-fajla.html */
 
-function previewImage(number, file)
+function previewImage(inputname, file)
 {
-    try {
-        if (file) {
-    		var fileSize = 0; 					
-				
-            if (file.size > 1024 * 1024) {
-                fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
-            }else {
-                fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
-            }
+    if (file) {
+        var fileSize = 0; 					
 
-            document.getElementById('file-name'+number).value = file.name;
-            document.getElementById('file-size'+number).innerHTML = 'Размер: ' + fileSize;
-
-            if (/\.(jpe?g|bmp|gif|png)$/i.test(file.name)) {		
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                        document.getElementById('imgP'+number).src=e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
+        if (file.size > 1024 * 1024) {
+            fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+        }else {
+            fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
         }
-    }catch(e) {
-        var file = document.getElementById('uploaded-file'+number).value;
-        file = file.replace(/\\/g, "/").split('/').pop();
-        document.getElementById('file-name'+number).innerHTML = 'Имя: ' + file;
+
+        document.getElementById(inputname+'_name').value = file.name;
+        document.getElementById(inputname+'_size').innerHTML = 'Размер: ' + fileSize;
+
+        if (/\.(jpe?g|bmp|gif|png)$/i.test(file.name)) {		
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(inputname+'_preview').src=e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
     }
 }
 
-function addFileInput()
+function addFileInput(maxfiles)
 {
-    if (fileindex > 9)
+    if (fileindex >= maxfiles)
         return;
-    var tpl = "<div class=\"file-upload\"><label><input id=\"uploaded-file"+fileindex+"\" type=\"file\" name=\"image"+fileindex+"\" onchange=\"previewImage("+fileindex+", this.files[0]);\" /><span>Выберите файл</span><br /></label></div><input name=\"file-name"+fileindex+"\" id=\"file-name"+fileindex+"\" class=\"divtablecell\" value=\"\" /><div class=\"divtablecell preview-img\"><img class=\"preview-img\" id=\"imgP"+fileindex+"\" src=\"\" /></div><div id=\"file-size"+fileindex+"\" class=\"divtablecell\">&nbsp;</div><div class=\"divtablecell\"><input type=\"button\" value=\"Удалить файл\" onclick=\"removeFileInput("+fileindex+")\" /></div><br />";
+    var tpl = "<div class=\"file-upload\"><label><input id=\"workpic"+fileindex+"\" type=\"file\" name=\"workpic"+fileindex+"\" onchange=\"previewImage('workpic"+fileindex+"', this.files[0]);\" /><span>Выберите файл</span><br /></label></div><input name=\"workpic"+fileindex+"_name\" id=\"workpic"+fileindex+"_name\" class=\"divtablecell\" value=\"\" /><div class=\"divtablecell preview-img\"><img class=\"preview-img\" id=\"workpic"+fileindex+"_preview\" src=\"\" /></div><div id=\"workpic"+fileindex+"_size\" class=\"divtablecell\">&nbsp;</div><div class=\"divtablecell\"><input type=\"button\" value=\"Удалить файл\" onclick=\"removeFileInput("+fileindex+")\" /></div><br />";
     var fileinputdiv = document.getElementById('fileinputs');
     var content = document.createElement('div');
     content.setAttribute('id', 'fileinputdiv'+fileindex);
