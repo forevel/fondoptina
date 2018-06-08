@@ -13,11 +13,12 @@ var ul, ulitems;
 function InitSlides() {
     /* количество слайдов */
     ul = document.getElementById('sliderul');
-    ulitems = ul.children;
+    ulitems = ul.getElementsByTagName('li');
     SliderImgCount = ulitems.length;
     /* запускаем первый слайд */
     CurSliderImg = 0;
-    var SlideInterval = setInterval(NextSlide, 3000);
+//    alert(SliderImgCount);
+    var SlideInterval = setInterval(NextSlide, 5000);
 }
 
 function NextSlide() {

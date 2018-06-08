@@ -1,6 +1,6 @@
 <?php
 /* Редактирование новостей */
-require_once(__DIR__ . "/../inc/config.php");
+require_once(__DIR__ . "/../inc/f_main.php");
 
 $title="Редактор новостей";
 $isnew=true;

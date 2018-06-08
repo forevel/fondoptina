@@ -1,8 +1,8 @@
 <?php
 /* Редактирование проектов */
 require_once(__DIR__ . "/../inc/config.php");
-require_once(__DIR__ . "/../inc/images.php");
-require_once(__DIR__ . "/../inc/files.php");
+require_once(__DIR__ . "/../inc/f_images.php");
+require_once(__DIR__ . "/../inc/f_files.php");
 
 $title="Редактор работ";
 $images = array();
@@ -15,7 +15,7 @@ if (isset($_GET['action']))
 }
 
 // считать права доступа к сайту через SESSION
-if((isset($_SESSION["rights"])) && (isset($workaction)))
+if (isset($_SESSION["rights"]))
 {
     if(isset($workaction))
     {
@@ -60,7 +60,7 @@ if((isset($_SESSION["rights"])) && (isset($workaction)))
                 "deleted" => "0",
             );
 //                var_dump($keysvalues);
-            $result = getValuesByFieldsOrdered('workpics', $fields, $keysvalues);
+            $result = getValuesByFieldsOrdered('workpic', $fields, $keysvalues);
 //                var_dump($result);
             if ($result != RESULT_ERROR)
             {
@@ -77,15 +77,21 @@ if((isset($_SESSION["rights"])) && (isset($workaction)))
             }
             else
             {
-                fo_error_msg("Произошла ошибка");
+                fo_error_msg("Произошла ошибка при получении данных по workpic");
                 exit;
             }
+        }
+        else
+        {
+            fo_error_msg("Не установлен action");
+            require_once("index.php");
+            exit;
         }
     }
 }
 else
 {
-    fo_error_msg("Не установлены права либо отсутствует action");
+    fo_error_msg("Не установлены права");
     require_once("index.php");
     exit;
 }
@@ -194,7 +200,7 @@ if (isset($idprojects))
     <input type="hidden" name="projid" value="<?=$idprojects?>">
     <input type="hidden" name="workid" value="<?=$workid?>">
 </form>
-    <a href="workstable.php">Назад</a>
+    <a href="workstable.php?id=<?=$idprojects?>">Назад</a>
     <span id="tempout"></span>
     </body>
 </html>

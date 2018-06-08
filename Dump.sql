@@ -99,28 +99,29 @@ LOCK TABLES `posts` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `projectimages`
+-- Table structure for table `projectpic`
 --
 
-DROP TABLE IF EXISTS `projectimages`;
+DROP TABLE IF EXISTS `projectpic`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `projectimages` (
+CREATE TABLE `projectpic` (
   `id` int(11) NOT NULL,
   `url` varchar(1023) DEFAULT NULL,
-  `projid` int(11) NOT NULL DEFAULT '0',
+  `idproj` int(11) DEFAULT NULL,
+  `deleted` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `projectimages`
+-- Dumping data for table `projectpic`
 --
 
-LOCK TABLES `projectimages` WRITE;
-/*!40000 ALTER TABLE `projectimages` DISABLE KEYS */;
-INSERT INTO `projectimages` VALUES (1,'upload/18/01/28/476_n.jpg',2),(2,'upload/18/01/28/16.jpg',2);
-/*!40000 ALTER TABLE `projectimages` ENABLE KEYS */;
+LOCK TABLES `projectpic` WRITE;
+/*!40000 ALTER TABLE `projectpic` DISABLE KEYS */;
+INSERT INTO `projectpic` VALUES (1,'upload/18/01/28/476_n.jpg',2,0),(2,'upload/18/01/28/16.jpg',2,0);
+/*!40000 ALTER TABLE `projectpic` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -239,13 +240,13 @@ INSERT INTO `users` VALUES (1,'admin','$2y$10$I3R6xFB.ttF5GA9KkE86R.k4Pv2PJwOJUs
 UNLOCK TABLES;
 
 --
--- Table structure for table `workpics`
+-- Table structure for table `workpic`
 --
 
-DROP TABLE IF EXISTS `workpics`;
+DROP TABLE IF EXISTS `workpic`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `workpics` (
+CREATE TABLE `workpic` (
   `id` int(11) NOT NULL,
   `url` text,
   `idwork` int(11) DEFAULT NULL,
@@ -255,13 +256,13 @@ CREATE TABLE `workpics` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `workpics`
+-- Dumping data for table `workpic`
 --
 
-LOCK TABLES `workpics` WRITE;
-/*!40000 ALTER TABLE `workpics` DISABLE KEYS */;
-INSERT INTO `workpics` VALUES (1,'upload/18/06/06/476_n.jpg',1,0),(2,'upload/18/06/07/16.jpg',2,0);
-/*!40000 ALTER TABLE `workpics` ENABLE KEYS */;
+LOCK TABLES `workpic` WRITE;
+/*!40000 ALTER TABLE `workpic` DISABLE KEYS */;
+INSERT INTO `workpic` VALUES (5,'upload/18/06/06/476_n.jpg',2,0),(6,'upload/18/06/07/16.jpg',1,0),(7,'upload/18/06/08/17.jpg',1,0);
+/*!40000 ALTER TABLE `workpic` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -298,7 +299,7 @@ CREATE TABLE `works` (
 
 LOCK TABLES `works` WRITE;
 /*!40000 ALTER TABLE `works` DISABLE KEYS */;
-INSERT INTO `works` VALUES (1,2,'Спортзал','<h2>Спортзал</h2><p>Спортзал в школе находится в плачевном состоянии</p>',15000,7000,70,'2018-05-06','0000-00-00','0000-00-00','0000-00-00','18216920_small.png','upload/18/06/06/18216920.png',0),(2,2,'Спортзал2','Спортзал2',3750,2000,25,'2018-05-07','0000-00-00','0000-00-00','0000-00-00','17_small.jpg','upload/18/06/07/17.jpg',0);
+INSERT INTO `works` VALUES (1,2,'Спортзал','<h2>Спортзал</h2><p>Спортзал в школе находится в плачевном состоянии</p>',15000,7000,70,'2018-05-06','0000-00-00','0000-00-00','0000-00-00','upload/18/06/08/18216920_small.png','upload/18/06/06/18216920.png',0),(2,2,'Спортзал2','Спортзал2',3750,2000,25,'2018-05-07','0000-00-00','0000-00-00','0000-00-00','upload/18/06/08/17_small.jpg','upload/18/06/07/17.jpg',0);
 /*!40000 ALTER TABLE `works` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -311,4 +312,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-07 10:00:36
+-- Dump completed on 2018-06-08 22:21:01

@@ -9,7 +9,8 @@ define('RESULT_EMPTY', -2);
 define('UPLOAD_FILE_MAX',10);
 //define('DEFLAT', '54.03482');
 //define('DEFLOG', '35.78226');
+session_start();
 require_once("database.php");
-require_once("functions.php");
+//require_once("functions.php");
 dbConnect();
 ?>

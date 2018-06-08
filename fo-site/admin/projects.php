@@ -1,55 +1,17 @@
 <?php
 /* Редактирование проектов */
-require_once(__DIR__ . "/../inc/config.php");
-
-function updateFiles($id)
-{
-    // очищаем базу от старых записей о картинках
-    deleteFromTable('projectimages', 'projid', $id);
-    /* надо пройтись по всем полям с именем file-name<?=$i?> и, если они начинаются
-     * с "upload/", то записать их в базу по нашему $id */
-    for ($i=0; $i<10; $i++)
-    {
-        $filename = 'file-name' . $i;
-//        echo ($filename);
-        if (isset($_POST[$filename]))
-        {
-            $filename = $_POST[$filename];
-//            echo ($filename);
-            if (strpos($filename, 'upload/') === false) // нет подстроки
-                continue;
-//            echo ("!");
-            $keysvalues = array(
-                'url' => $filename,
-                'projid' => $id,
-            );
-            newRecord('projectimages', $keysvalues);
-        }
-    }
-    // теперь пишем картинки в базу
-//    var_dump($_FILES);
-    foreach($_FILES as $file) {
-        if (($newfilename = uploadFile($file)) != RESULT_ERROR)
-        {
-            $keysvalues = array(
-                'url' => $newfilename,
-                'projid' => $id,
-            );
-            newRecord('projectimages', $keysvalues);
-        }
-    }
-}
+require_once(__DIR__ . "/../inc/f_files.php");
 
 $title="Редактор проектов";
 $images = array();
-$projaction = $_GET['action'];
 $projid = $_GET['id'];
-$_SESSION['projid'] = $projid;
-if (isset($projaction))
+// $_SESSION['projid'] = $projid;
+if (isset($_GET['action']))
 {
-//    $_SESSION['proj_action'] = $projaction;
-//    if (($projaction == "edit") && (isset($projid)))
-//        $_SESSION['proj_id'] = $_GET['id'];
+    $projaction = $_GET['action'];
+    //    $_SESSION['proj_action'] = $projaction;
+    //    if (($projaction == "edit") && (isset($projid)))
+    //        $_SESSION['proj_id'] = $_GET['id'];
     // считать права доступа к сайту через SESSION
     if(isset($_SESSION["rights"]))
     {
@@ -89,7 +51,7 @@ if (isset($projaction))
                         $projid = newRecord("projects", $keysvalues);
                         if ($projid != RESULT_ERROR) // всё прошло хорошо
                         {
-                            updateFiles($projid);
+                            updateFiles("projectpic", "idproj", $projid);
                         }
                     }
                 }
@@ -100,7 +62,7 @@ if (isset($projaction))
                         fo_error_msg("Ошибка при записи");
                         exit;
                     }
-                    updateFiles($projid);
+                    updateFiles("projectpic", "idproj", $projid);
                 }
                 // обновляем меню
                 // ищем пункт меню "Проекты" и берём его id
@@ -113,7 +75,7 @@ if (isset($projaction))
                 else
                 {
                     fo_error_msg("Ошибка обновления меню");
-                    require_once("projectstable.php");
+                    require_once(__DIR__ . "/projectstable.php");
                     exit;
                 }
                 // сначала поиск id, у которого name = $_POST['name']
@@ -129,7 +91,7 @@ if (isset($projaction))
                 if ($result == RESULT_EMPTY)
                 {
                     // создаём массив c keysvalues, заданными ранее
-                    var_dump($projid);
+//                    var_dump($projid);
                     $keysvalues = [
                         'name' => $_POST['name'],
                         'idalias' => $projmenuid,
@@ -139,17 +101,17 @@ if (isset($projaction))
                     if ($id == RESULT_ERROR)
                     {
                         fo_error_msg("Ошибка добавления пункта меню");
-                        require_once("projectstable.php");
+                        require_once(__DIR__ . "/projectstable.php");
                         exit;
                     }
                 }
                 fo_error_msg("Записано успешно!");
-                require_once("projectstable.php");
+                require_once(__DIR__ . "/projectstable.php");
                 exit;
             }
             else
             {
-                require_once("/index.php");
+                require_once(__DIR__ . "/index.php");
                 exit;
             }
         }
@@ -166,7 +128,7 @@ if (isset($projaction))
                 {
                     deleteFromTableById("projects", $projid);
                     fo_error_msg("Удалено успешно!");
-                    require_once("projectstable.php");
+                    require_once(__DIR__ . "/projectstable.php");
                     exit;
                 }
                 // action = edit
@@ -195,7 +157,7 @@ if (isset($projaction))
                     $keysvalues = array (
                         'projid' => $projid,
                     );
-                    $result = getValuesByFieldsOrdered('projectimages', $fields, $keysvalues);
+                    $result = getValuesByFieldsOrdered('projectpic', $fields, $keysvalues);
     //                var_dump($result);
                     if ($result != RESULT_ERROR)
                     {
@@ -220,7 +182,7 @@ else
 {
     fo_error_msg("Не установлены права либо отсутствует action");
     fo_error_msg($_SESSION['rights']."__".$_GET['action']);
-    require_once("index.php");
+    require_once(__DIR__ . "/index.php");
     exit;
 }
 ?>
@@ -229,7 +191,7 @@ else
     <title><?php print $title; ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
-	<script src="/js/jquery-3.2.1.min.js" type="text/javascript"></script>
+<!--	<script src="/js/jquery-3.2.1.min.js" type="text/javascript"></script> -->
     <script src="/js/img_preview.js" type="text/javascript"></script>
     <script src="/js/map_event.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/css/imgpreview.css">
@@ -238,11 +200,6 @@ else
 </head>
 <body>
 <h1><?php print $title; ?></h1>
-<?php
-if(!empty($messages)){
-  displayErrors($messages);
-}
-?>
 <div id='yamap'></div>
 <form action="" method="POST" enctype="multipart/form-data">
     <table>
@@ -284,13 +241,13 @@ if(!empty($messages)){
         <div class="file-form-wrap divtable" id="fileinputdiv<?=$i?>">
             <div class="file-upload">
                 <label>
-                    <input id="uploaded-file<?=$i?>" type="file" name="image<?=$i?>" onchange="previewImage(<?=$i?>, this.files[0]);" />
+                    <input id="projectpic<?=$i?>" type="file" name="projectpic<?=$i?>" onchange="previewImage('projectpic<?=$i?>', this.files[0]);" />
                     <span>Выберите файл</span><br />
                 </label>
             </div>
-            <input name="file-name<?=$i?>" id="file-name<?=$i?>" class="divtablecell" value="<?php print isset($image) ? $image : '' ?>" />
-            <div class="divtablecell preview-img"><img class="preview-img" id="imgP<?=$i?>" src="<?php print isset($image) ? 'image.php?filename=' . $image : '' ?>" /></div>
-            <div id="file-size<?=$i?>" class="divtablecell">&nbsp;</div>
+            <input name="projectpic<?=$i?>_name" id="projectpic<?=$i?>_name" class="divtablecell" value="<?php print isset($image) ? $image : '' ?>" />
+            <div class="divtablecell preview-img"><img class="preview-img" id="projectpic<?=$i?>_preview" src="<?php print isset($image) ? 'image.php?filename=' . $image : '' ?>" /></div>
+            <div id="projectpic<?=$i?>_size" class="divtablecell">&nbsp;</div>
             <div class="divtablecell"><input type="button" value="Удалить файл" onclick="removeFileInput(<?=$i?>)" /></div>
         </div>
         <br />
@@ -300,7 +257,7 @@ if(!empty($messages)){
     <script>
         fileindex = '<?= $i ?>';
     </script>
-    <input type="button" value="Добавить файл" onclick="addFileInput()"><br />
+    <input type="button" value="Добавить файл" onclick="addFileInput(UPLOAD_FILE_MAX)"><br />
     <input name="submit" type="submit" value="Отправить в базу"><br />
 </form>
         

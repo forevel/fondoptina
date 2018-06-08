@@ -1,10 +1,21 @@
 <?php
 
-$link = null;
+if (!isset($link))
+{
+    $link = null;
+}
 
 function dbConnect()
 {
     global $link;
+    if ($link != null)
+    {
+        if ($link->ping())
+        {
+            echo "mysql";
+            return;
+        }
+    }
     $link = mysqli_connect(MYSQL_SERVER, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB);
     if (!$link) 
     {

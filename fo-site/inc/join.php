@@ -1,7 +1,7 @@
 <?php
 /* Функции для добавления новых пользователей в систему */
 
-require_once("config.php");
+require_once(__DIR__ . "/f_main.php");
 
 $check = checkLoggedIn();
 if (!$check)

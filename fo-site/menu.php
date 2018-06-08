@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . "/inc/f_menu.php");
 print '<nav class="menu-primary">' . PHP_EOL;
 $menu = getMenuitemByIdalias('0');
 if ($menu != RESULT_EMPTY)

@@ -1,4 +1,5 @@
 <?php
+require_once (__DIR__ . "/f_main.php");
 function createDirAndChange($dir)
 {
     if (!is_dir($dir))
@@ -61,8 +62,8 @@ function uploadFile($file, $filename)
 //                var_dump($returncode);
                 $objDateTime = new DateTime('NOW');
                 $filename = "upload/" . date_format($objDateTime, "y") . "/" . date_format($objDateTime, "m") . "/" . date_format($objDateTime, "d") . "/" . $filename;
-                echo '#5#';
-                var_dump($filename); 
+//                echo '#5#';
+//                var_dump($filename); 
                 return $filename;
             }
         }
@@ -82,41 +83,42 @@ function uploadFile($file, $filename)
  * if nothing has been found
  * input: $template - in the form: "<template><index>'_name'" is the input field
  * where the name of the file located
+ * $idname - is a field string that is compared to $id
  * $id - is an id of the current work
  */
-function updateFiles($workid)
+function updateFiles($template, $idname, $id)
 {
 //    echo '#2#';
     // очищаем базу от старых записей о картинках
-    if (isset($workid))
+    if (isset($id))
     {
-        deleteFromTable('workpics', 'idwork', $workid, 1); // real delete
+        deleteFromTable($template, $idname, $id, 1); // real delete
         // теперь пишем картинки в базу
         for ($i=1; $i<UPLOAD_FILE_MAX; $i++)
         {
-            if (isset($_POST['workpic'.$i.'_name']))
+            if (isset($_POST[$template.$i.'_name']))
             {
-                $filename = $_POST['workpic'.$i.'_name'];
+                $filename = $_POST[$template.$i.'_name'];
             }
             else
             {
                 continue;
             }
-            if (($newfilename = uploadFile($_FILES['workpic'.$i], $filename)) != RESULT_ERROR)
+            if (($newfilename = uploadFile($_FILES[$template.$i], $filename)) != RESULT_ERROR)
             {
 /*                echo '#3#';
                 var_dump($newfilename); */
                 $keysvalues = array(
                     'url' => $newfilename,
-                    'idwork' => $workid,
+                    $idname => $id,
                 );
-                newRecord('workpics', $keysvalues);
+                newRecord($template, $keysvalues);
             }
         }
     }
     else
     {
-        fo_error_msg("Не задан ИД работы");
+        fo_error_msg("Не задан ИД");
     }
 }
 ?>

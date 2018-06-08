@@ -1,5 +1,5 @@
 <?php
-require_once("inc/config.php");
+require_once("inc/f_main.php");
 
 if (isset($pagename))
 {

@@ -1,5 +1,6 @@
 <?php
-require_once(__DIR__ . "/../inc/config.php");
+require_once(__DIR__ . "/../inc/f_main.php");
+
 $database = 'users';
 $title="Редактор пользователей";
 if (isset($_GET['action']))

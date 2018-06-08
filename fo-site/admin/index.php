@@ -1,14 +1,14 @@
 ﻿<?php
 require_once(__DIR__ . "/../inc/config.php");
-/*fo_error_msg("admin");
-        fo_error_msg($_SESSION['rights']);
-        fo_error_msg($_SESSION['loggedIn']); */
+/* fo_error_msg("admin");
+fo_error_msg($_SESSION['rights']);
+fo_error_msg($_SESSION['loggedIn']); */
 
 // считать права доступа к сайту через SESSION
 if(!isset($_SESSION["rights"]))
 {
     fo_error_msg("Не установлены права доступа для данного пользователя");
-    require_once(__DIR__ . "/../inc/logout.php");
+    require_once(__DIR__ . "/logout.php");
     exit;
 }
 // если администратор (права 4), дать ссылку редактирования пользователей

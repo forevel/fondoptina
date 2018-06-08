@@ -1,6 +1,6 @@
 <?php
 
-require_once(__DIR__ . "/../inc/config.php");
+require_once(__DIR__ . "/../inc/f_main.php");
 // считать права доступа к сайту через SESSION
 if(isset($_SESSION["rights"]))
 {
@@ -9,7 +9,8 @@ if(isset($_SESSION["rights"]))
 else
 {
     fo_error_msg("Не заданы права пользователя");
-    require_once(__DIR__ . "/../inc/login.php");
+    require_once(__DIR__ . "/logout.php");
+    exit;
 }
 ?>
 

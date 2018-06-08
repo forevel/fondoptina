@@ -1,9 +1,9 @@
 <?php
-require_once(__DIR__ . "/../inc/config.php");
+require_once(__DIR__ . "/../inc/f_main.php");
 if(!isset($_SESSION["rights"]))
 {
     fo_error_msg("Не установлены права доступа для данного пользователя");
-    require_once(__DIR__ . "/../inc/logout.php");
+    require_once(__DIR__ . "/logout.php");
     exit;
 }
 

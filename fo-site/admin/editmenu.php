@@ -1,6 +1,6 @@
 <?php
 // https://learn.javascript.ru/task/sliding-tree
-require_once(__DIR__ . "/../inc/config.php");
+require_once(__DIR__ . "/../inc/f_main.php");
 // считать права доступа к сайту через SESSION
 if(isset($_SESSION["rights"]))
 {

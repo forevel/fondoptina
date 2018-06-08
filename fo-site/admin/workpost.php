@@ -1,14 +1,14 @@
 <?php
 /* Редактирование проектов */
 require_once(__DIR__ . "/../inc/config.php");
-require_once(__DIR__ . "/../inc/images.php");
-require_once(__DIR__ . "/../inc/files.php");
+require_once(__DIR__ . "/../inc/f_images.php");
+require_once(__DIR__ . "/../inc/f_files.php");
 
 $images = array();
 
 // echo '#0#';
-$workaction = $_POST['workaction'];
-$workid = $_POST['workid'];
+if (isset($_POST['workaction'])) $workaction = $_POST['workaction'];
+if (isset($_POST['workid'])) $workid = $_POST['workid'];
 // считать права доступа к сайту через SESSION
 if (isset($_POST["submit"]))
 {
@@ -42,7 +42,7 @@ if (isset($_POST["submit"]))
                 exit;
             }
         }
-        updateFiles($workid);
+        updateFiles("workpic", "idwork", $workid);
         if (isset($_POST['mainpic_name'])) $mainpic_name = $_POST['mainpic_name'];
         if (($newfilename = uploadFile($_FILES['mainpic'], $mainpic_name)) != RESULT_ERROR)
         {
@@ -52,9 +52,11 @@ if (isset($_POST["submit"]))
 //            var_dump($newsmallfilename);
             image_resize(__DIR__."/../".$newfilename, __DIR__."/../tmp/".$newsmallfilename,100);
             /* create dir in format: ../upload/yyyy/mm/dd and change into it */
-            createUploadDir(); 
+            createUploadDir();
+            $objDateTime = new DateTime('NOW');
+            $newsmallfilenamefull = "upload/" . date_format($objDateTime, "y") . "/" . date_format($objDateTime, "m") . "/" . date_format($objDateTime, "d") . "/" . $newsmallfilename;
             rename(__DIR__."/../tmp/".$newsmallfilename, "./" . $newsmallfilename);
-            $keysvalues['pic'] = $newsmallfilename;
+            $keysvalues['pic'] = $newsmallfilenamefull;
             $keysvalues['picfull'] = $newfilename;
         }
         if ($workaction == "new")
@@ -89,7 +91,8 @@ if (isset($_POST["submit"]))
 }
 else
 {
-    fo_error_msg("Не дан метод POST");
+//    fo_error_msg("Не дан метод POST");
+    require_once(__DIR__ . "/index.php");
     exit;
 }
 ?>

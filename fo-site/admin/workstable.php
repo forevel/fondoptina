@@ -41,7 +41,7 @@ else
 <body>
 <div>
     <h1>Проект: <?php print (isset($project) ? $project : ""); ?></h1>
-    <a href="work.php?action=new">Новая работа</a><br>
+    <a href="editwork.php?action=new">Новая работа</a><br>
     <table border="1">
         <tr>
             <th>ИД</th>

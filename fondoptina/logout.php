@@ -1,5 +1,5 @@
 <?php
-require_once("../fo-site/inc/config.php");
+require_once(__DIR__ . "/../fo-site/inc/f_login.php");
 flushMemberSession();
-require_once("index.php");
+require_once(__DIR__ . "/../fo-site/admin/login.php");
 ?>

@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . "/config.php");
+require_once(__DIR__ . "/../inc/f_login.php");
 
 $title="Страница авторизации";
 // fo_error_msg("login started");
@@ -11,16 +11,18 @@ if(isset($_POST["submit"]))
     $row = checkPass($_POST["login"], $_POST["password"]);
 	if ($row != RESULT_ERROR)
     {
+//        session_destroy();
+        session_start();
 		cleanMemberSession($row[0]['user'], $row[0]['psw'], $row[0]['rights']);
 /*        fo_error_msg($_SESSION['rights']);
         fo_error_msg($_SESSION['loggedIn']); */
-		require_once(__DIR__ . "/../admin/index.php");
+		require_once(__DIR__ . "/index.php");
         exit;
     }
 }
 if(isset($_SESSION['rights']))
 {
-    require_once(__DIR__ . '/../admin/index.php');
+    require_once(__DIR__ . '/index.php');
     exit;
 }
 
